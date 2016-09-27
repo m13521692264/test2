@@ -1008,7 +1008,7 @@ function https_request_api($apiPath, $data = null) {
     if(!$apiPath) {
         return false;
     }
-    $url = 'http://api.yjobs.net/'.$apiPath;
+    $url = 'http://ac.yjob.net/'.$apiPath;
     if(function_exists('curl_init')){
         $header = array(
             'Content-Type: application/json',
