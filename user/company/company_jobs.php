@@ -498,16 +498,88 @@ elseif ($act=='editjobs')
 		$jobs['minage'] = $jobs_age[0];
 		$jobs['maxage'] = $jobs_age[1];
 	}
-       
+        
+        $tagSql = "SELECT * FROM ".table('category')." where c_alias='QS_jobtag'";
+        $tagArr = $db->getall($tagSql);
+        if($jobs['position_high']) {
+            $jobs['position_high'] = array_flip(explode(",", $jobs['position_high']));
+            foreach($tagArr as $tk => $tag) {
+                if(isset($jobs['position_high'][$tag['c_id']])) {
+                   $jobs['tag'][] = $tag['c_id'];
+                   $jobs['tag_cn'][] = $tag['c_name'];
+                }
+            }
+        }
+        $jobs['tag'] = implode(',', $jobs['tag']);
+        $jobs['tag_cn'] = implode(',', $jobs['tag_cn']);
+        //职位标签
+        $tagSql = "SELECT * FROM ".table('category')." where c_alias='jobspecial'";
+        $tagArr = $db->getall($tagSql);
+        if($jobs['position_character']) {
+            $jobs['position_character'] = array_flip(explode(",", $jobs['position_character']));
+            foreach($tagArr as $tk => $tag) {
+                if(isset($jobs['position_character'][$tag['c_id']])) {
+                   $jobs['jobspecial'][] = $tag['c_id'];
+                   $jobs['jobspecial_cn'][] = $tag['c_name'];
+                }
+            }
+        }
+        $jobs['jobspecial'] = implode(',', $jobs['jobspecial']);
+        $jobs['jobspecial_cn'] = implode(',', $jobs['jobspecial_cn']);
+        
+        //学历
+        $tagSql = "SELECT * FROM ".table('category')." where c_alias='QS_education'";
+        $tagArr = $db->getall($tagSql);
+        if($jobs['education']) {
+            $jobs['education_bak'] = array_flip(explode(",", $jobs['education']));
+            unset($jobs['education']);
+            foreach($tagArr as $tk => $tag) {
+                if(isset($jobs['education_bak'][$tag['c_id']])) {
+                   $jobs['education'][] = $tag['c_id'];
+                   $jobs['education_cn'][] = $tag['c_name'];
+                }
+            }
+        }
+        $jobs['education'] = implode(',', $jobs['education']);
+        $jobs['education_cn'] = implode(',', $jobs['education_cn']);
+        
+        $tagSql = "SELECT * FROM ".table('category')." where c_alias='QS_experience'";
+        $tagArr = $db->getall($tagSql);
+        if($jobs['experience']) {
+            $jobs['experience_bak'] = array_flip(explode(",", $jobs['experience']));
+            unset($jobs['experience']);
+            foreach($tagArr as $tk => $tag) {
+                if(isset($jobs['experience_bak'][$tag['c_id']])) {
+                   $jobs['experience'][] = $tag['c_id'];
+                   $jobs['experience_cn'][] = $tag['c_name'];
+                }
+            }
+        }
+        $jobs['experience'] = implode(',', $jobs['experience']);
+        $jobs['experience_cn'] = implode(',', $jobs['experience_cn']);
+      
 	$smarty->assign('user',$user);
 	$smarty->assign('title','修改职位 - 企业会员中心 - '.$_CFG['site_name']);
 	$smarty->assign('points_total',get_user_points($_SESSION['uid']));
 	$smarty->assign('points',get_cache('points_rule'));
 	$smarty->assign('subsite',get_all_subsite());
-	$subsite_cn = explode('/',$jobs['district_cn']);
-	$smarty->assign('subsite_cn',$subsite_cn[0]);
-	$smarty->assign('district_cn',$subsite_cn[1]);
-	$smarty->assign('district',get_subsite_district($jobs['district']));
+        foreach(get_all_subsite() as $sk => $site) {
+            if($site['s_id'] == $jobs['publish_city_id']) {
+                $jobs['site'] = $site;
+                $jobs['subsite_id'] = $site['s_id'];
+                $jobs['subsite_name'] = $site['s_sitename'];
+
+            }
+        }
+        if($jobs['list']) {
+            foreach($jobs['list'] as $lk => &$lv) {
+                $lv['start_date'] = date('Y年m月d日', $lv['start_date']);
+                $lv['end_date'] = date('Y年月d日', $lv['end_date']);
+            }
+        }
+	$smarty->assign('subsite_cn', $jobs['site']['s_sitename']);
+	$smarty->assign('district_cn',$jobs['site']['s_districtname']);
+	$smarty->assign('district',get_subsite_district($jobs['s_district']));
 	$smarty->assign('jobs',$jobs);
 	$smarty->display('member_company/company_editjobs.htm');
 }
