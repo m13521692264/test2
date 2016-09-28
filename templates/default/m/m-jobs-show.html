@@ -8,9 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="">
 <meta name="format-detection" content="telephone=no">
-	<title>{#$show.jobs_name#} - {#$QISHI.site_name#}</title>
-	<meta name="description" content="{#$page.description#},{#$show.companyname#}招聘职位{#$show.jobs_name#}" id="description">
-	<meta name="keywords" content="{#$page.keywords#},{#$QISHI.site_name#},{#$show.companyname#},{#$show.nature_cn#},{#$show.category_cn#},{#$show.trade_cn#},{#$show.district_cn#},{#$show.tag_cn#},{#$show.experience_cn#},{#$show.education_cn#}">
+	<title>{#$show.job_name#} - {#$QISHI.site_name#}</title>
+	<meta name="description" content="{#$page.description#},{#$show.companyname#}招聘职位{#$show.job_name#}" id="description">
+	<meta name="keywords" content="{#$page.keywords#},{#$QISHI.site_name#},{#$show.company_name#},{#$show.nature_cn#},{#$show.category_name#},{#$show.trade_cn#},{#$show.district_cn#},{#$show.tag_cn#},{#$show.experience_cn#},{#$show.education_cn#}">
 <link rel="stylesheet" href="http://static.yjob.net/layout/blue/css/glide.css">
 <link rel="stylesheet" href="http://static.yjob.net/layout/blue/css/common.css">
 <link href="./css/common.css" rel="stylesheet" type="text/css" />
@@ -52,17 +52,17 @@ var YDB = new YDBOBJ();
 				$(".choose_menu").css({ top: ($(window).height() - $('.choose_menu').outerHeight())/2 + $(document).scrollTop() });
 				$(".choose_menu").show();
 				var jobs_id = {#$show.id#};
-				var jobs_name = "{#$show.jobs_name#}";
+				var jobs_name = "{#$show.job_name#}";
 				var company_id = {#$show.company_id#};
-				var company_name = "{#$show.companyname#}";
-				var company_uid = {#$show.uid#};
+				var company_name = "{#$show.company_name#}";
+                                var job_info_id = $("#position_id").val();
 				$("#but_left").click(function(){
 					var resume_id=$("input[name='resume_list']:checked").val();
 					var resume_title=$("input[name='resume_list']:checked").attr("title");
 					if(resume_id){
 						$(".choose_menu").hide();
 						$(".menu_bg_layer").remove();
-						$.post("personal/apply.php?act=apply_add",{jobs_id:jobs_id,jobs_name:jobs_name,company_id:company_id,company_name:company_name,company_uid:company_uid,resume_id:resume_id,resume_title:resume_title},function(data){
+						$.post("personal/apply.php?act=apply_add",{job_id:jobs_id,jobs_name:jobs_name,company_id:company_id,company_name:company_name,resume_id:resume_id,resume_title:resume_title,job_info_id:job_info_id},function(data){
 							if(data=="ok"){
 								//layer.msg('申请职位成功！', {icon: 1});
 								$("#bm").show();
@@ -74,9 +74,9 @@ var YDB = new YDBOBJ();
 							}else{
 								$("#ybm").show();
 								$("#ybm h4").html(data);
-								setTimeout(function () {
-		                            window.location.reload();
-		                        }, 2000);
+//								setTimeout(function () {
+//		                            window.location.reload();
+//		                        }, 2000);
 							}
 						});
 					}else{
@@ -151,7 +151,7 @@ var YDB = new YDBOBJ();
 		</div>
 		<div class="txt">
 			
-			<h2>{#$show.jobs_name#}</h2>
+			<h2>{#$show.job_name#}</h2>
 			<h4>{#$show.start_riqi#}-{#$show.end_riqi#}</h4>
 		</div>
 		<div class="sub">
@@ -170,10 +170,6 @@ var YDB = new YDBOBJ();
 		</div>
 		<div class="bd">
 			<dl>
-				<dt>工作地点：</dt>
-				<dd>{#$show.district_cn#}</dd>				
-			</dl>
-			<dl>
 				<dt>工作日期：</dt>
 				<dd>{#$show.start_riqi#}-{#$show.end_riqi#}</dd>
 			</dl>
@@ -187,7 +183,7 @@ var YDB = new YDBOBJ();
 			</dl>
 			<dl>
 				<dt>年龄限制：</dt>
-				<dd>{#$show.age#}</dd>
+				<dd>{#$show.min_age#}-{#$show.max_age#}岁</dd>
 			</dl>
 			<dl>
 				<dt>薪 <span></span><span></span>资：</dt>
@@ -204,42 +200,15 @@ var YDB = new YDBOBJ();
 			</dl>
 		</div>
 		<!--选择地址-->
-		<!--<div class="ft"> 
+		<div class="ft"> 
 			<i></i>
-			<select name="">
-				<option value="">选择其他地点</option>
-				<option value="">海淀区中关村新中关大厦</option>
-				<option value="">海淀区知春里知春公园</option>
-				<option value="" selected="">朝阳区团结湖瑞辰国际中心xxx朝阳区团结湖瑞辰国际中心xxx朝阳区团结湖瑞辰国际中心xxx</option>
-				<option value="">朝阳区团结湖朝阳公园</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
-				<option value="">丰台区大红门服装批发市场</option>
+			<select name="position_id" id="position_id">
+				<option value="0">选择地点</option>
+                            {#foreach from=$show.list item=plist#}
+				<option value="{#$plist.id#}">{#$plist.address#}</option>
+                            {#/foreach#}
 			</select>
-		</div>-->
+		</div>
 	</div>
 	
 	<div class="job_body ">
@@ -247,7 +216,7 @@ var YDB = new YDBOBJ();
 			<h4>职位描述</h4>
 		</div>
 		<div class="txt">
-				<p>{#$show.contents#}</p>	
+				<p>{#$show.job_desc#}</p>	
 		</div>
 	</div>
 	<!--<div id="jobs_contact"></div>-->
@@ -258,10 +227,9 @@ var YDB = new YDBOBJ();
 		</div>
 		<div class="tags">
 			<ul>
-				{#foreach from=$show.tag_cn item=tagli#}
-<li>{#$tagli#}</li>
-				{#/foreach#}
-	
+                        {#foreach from=$show.tag_cn item=tagli#}
+                            <li>{#$tagli#}</li>
+                        {#/foreach#}
 			</ul>
 		</div>
 	</div>
@@ -283,7 +251,7 @@ var YDB = new YDBOBJ();
 				<span></span>
 			</li>
 			<li>
-						{#if $is_show_tel#}
+                                {#if $is_show_tel#}
 						<a href="tel:{#if $show.contact.telephone#}{#$show.contact.telephone#}{#else#}{#$show.contact.landline_tel#}{#/if#}"><div class="ico2"></div>
 				<h4>电话联系</h4></a>
 						{#else#}
@@ -376,10 +344,6 @@ var YDB = new YDBOBJ();
 			</a>
 		</li>
 	</ul>
-
-
-
-	
 
 	<div class="alert_last">
 		<ul>

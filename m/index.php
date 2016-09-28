@@ -28,13 +28,13 @@ $redirect_sitename = '';
 	
 }*/
 if(intval($_CFG['subsite_id'])==0){
-	$subinfo = check_m_subsite_url();
-	if($subinfo){
-		$redirect_to_subsite = true;
-		$redirect_url = $subinfo['url'];
-		$redirect_disname = $subinfo['disname'];
-		$redirect_sitename = $subinfo['sitename'];
-	}
+    $subinfo = check_m_subsite_url();
+    if($subinfo){
+            $redirect_to_subsite = true;
+            $redirect_url = $subinfo['url'];
+            $redirect_disname = $subinfo['disname'];
+            $redirect_sitename = $subinfo['sitename'];
+    }
 }
 $smarty->assign('redirect_to_subsite',$redirect_to_subsite);
 $smarty->assign('redirect_url',$redirect_url);
@@ -85,26 +85,84 @@ foreach ($recommend_jobs as $key => $value)
 }
 $smarty->assign('recommend_jobs',$recommend_jobs);
 //最新职位
-$new_jobs = $db->getall("SELECT id,subsite_id,category,category_cn,subclass,jobs_name,district_cn,companyname,work_start,work_end,wage_amount,jobspecial_cn,wage_cn,refreshtime FROM ".table('jobs')." where ".$subsite_wheresql."  ORDER BY `refreshtime` DESC,`id` DESC LIMIT 5");
-foreach ($new_jobs as $key => $value) 
+$postData['page'] = 1;
+$postData['size'] = 5;
+$postData['order_type'] = 300;
+$jobTmp = https_request_api('job/search', $postData);
+$new_jobs = $jobTmp['data'];
+foreach ($new_jobs as $key => $jobs) 
 {
-	$new_jobs[$key]['url'] = wap_url_rewrite("jobs-show",array("id"=>$value['id']),1,$value['subsite_id']);
-	$new_jobs[$key]['r_time'] = daterange(time(),$value['refreshtime'],'Y-m-d',"#FF3300");
-	$new_jobs[$key]['work_start'] = date("n.j",$value['work_start']);
-	$new_jobs[$key]['work_end'] = date("n.j",$value['work_end']);
-	$category_cn=explode('/',$value['category_cn']);
-	$count=count($category_cn);
-	$ke1=$count-1;
-	$new_jobs[$key]['category_cn'] = $category_cn[$ke1];
-	if ($value['jobspecial_cn'])
-	{
-		$jobspecial_cn=explode(',',$value['jobspecial_cn']);
-		$new_jobs[$key]['jobspecial_cn']=$jobspecial_cn;
-	}
-	else
-	{
-		$new_jobs[$key]['jobspecial_cn']=array();
-	}
+    unset($new_jobs[$key]['job_desc']);
+	$new_jobs[$key]['url'] = wap_url_rewrite("jobs-show",array("id"=>$jobs['id']),1,$jobs['publish_city_id']);
+	$new_jobs[$key]['r_time'] = daterange(time(),$jobs['refreshtime'],'Y-m-d',"#FF3300");
+	$new_jobs[$key]['work_start'] = date("n.j",$jobs['work_start']);
+	$new_jobs[$key]['work_end'] = date("n.j",$jobs['work_end']);
+        $tagSql = "SELECT * FROM ".table('category')." where c_alias='QS_jobtag'";
+        $tagArr = $db->getall($tagSql);
+        if($jobs['position_high']) {
+            $jobs['position_high'] = array_flip(explode(",", $jobs['position_high']));
+            foreach($tagArr as $tk => $tag) {
+                if(isset($jobs['position_high'][$tag['c_id']])) {
+                   $jobs['tag'][] = $tag['c_id'];
+                   $jobs['tag_cn'][] = $tag['c_name'];
+                }
+            }
+        }
+        $new_jobs[$key]['tag'] = $jobs['tag'];
+        $new_jobs[$key]['tag_cn'] = $jobs['tag_cn'];
+        //职位标签
+        $tagSql = "SELECT * FROM ".table('category')." where c_alias='jobspecial'";
+        $tagArr = $db->getall($tagSql);
+        if($jobs['position_character']) {
+            $jobs['position_character'] = array_flip(explode(",", $jobs['position_character']));
+            foreach($tagArr as $tk => $tag) {
+                if(isset($jobs['position_character'][$tag['c_id']])) {
+                   $jobs['jobspecial'][] = $tag['c_id'];
+                   $jobs['jobspecial_cn'][] = $tag['c_name'];
+                }
+            }
+        }
+        $new_jobs[$key]['jobspecial'] = $jobs['jobspecial'];
+        $new_jobs[$key]['jobspecial_cn'] = $jobs['jobspecial_cn'];
+        //学历
+        $tagSql = "SELECT * FROM ".table('category')." where c_alias='QS_education'";
+        $tagArr = $db->getall($tagSql);
+        if($jobs['education']) {
+            $jobs['education_bak'] = array_flip(explode(",", $jobs['education']));
+            unset($jobs['education']);
+            foreach($tagArr as $tk => $tag) {
+                if(isset($jobs['education_bak'][$tag['c_id']])) {
+                   $jobs['education'][] = $tag['c_id'];
+                   $jobs['education_cn'][] = $tag['c_name'];
+                }
+            }
+        }
+        $new_jobs[$key]['education'] = $jobs['education'];
+        $new_jobs[$key]['education_cn'] = $jobs['education_cn'];
+        $tagSql = "SELECT * FROM ".table('category')." where c_alias='QS_experience'";
+        $tagArr = $db->getall($tagSql);
+        if($jobs['experience']) {
+            $jobs['experience_bak'] = array_flip(explode(",", $jobs['experience']));
+            unset($jobs['experience']);
+            foreach($tagArr as $tk => $tag) {
+                if(isset($jobs['experience_bak'][$tag['c_id']])) {
+                   $jobs['experience'][] = $tag['c_id'];
+                   $jobs['experience_cn'][] = $tag['c_name'];
+                }
+            }
+        }
+        foreach(get_all_subsite() as $sk => $site) {
+            if($site['s_id'] == $jobs['publish_city_id']) {
+                $jobs['site'] = $site;
+                $jobs['subsite_id'] = $site['s_id'];
+                $jobs['subsite_name'] = $site['s_sitename'];
+            }
+        }
+        $new_jobs[$key]['start_date'] = date('Y年m月d日', $new_jobs[$key]['start_date']);
+        $new_jobs[$key]['end_date'] = date('Y年m月d日', $new_jobs[$key]['end_date']);
+        $new_jobs[$key]['district_cn'] = $jobs['site']['s_districtname'];
+        $new_jobs[$key]['experience'] = $jobs['experience'];
+        $new_jobs[$key]['experience_cn'] = $jobs['experience_cn'];
 }
 $smarty->assign('new_jobs',$new_jobs);
 //名企推荐广告位

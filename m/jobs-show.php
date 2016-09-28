@@ -18,9 +18,13 @@ $smarty->cache = false;
 $db = new mysql($dbhost,$dbuser,$dbpass,$dbname);
 require_once(dirname(__FILE__).'/weixin_share.php');
 wap_weixin_logon($_GET['from']);
-$row=jobs_one($_GET['id']);
-check_m_url($row['subsite_id'],$smarty,$_CFG['m_job_url']);
-//感兴趣的职位
+$infoRst = https_request_api('job/info/'.$_GET['id']);
+if($infoRst['codes']) {
+    showmsg($infoRst['msg']);
+}
+$row=$infoRst['data'];
+check_m_url($row['publish_city_id'],$smarty,$_CFG['m_job_url']);
+////感兴趣的职位
 $interest_show=interest_jobs($row['topclass'],$row['category'],$row['subclass'],$_GET['id']);
 if($_SESSION["uid"] && $_SESSION["utype"]==2){
 	$sql="select * from ".table("resume")." where uid=$_SESSION[uid] ";
@@ -74,7 +78,7 @@ if($_SESSION['uid'] && $_SESSION['username'] && $_SESSION['utype']=='1' && $show
 	}
 }
 //处理固话信息(将分机号为空的去掉)
-$telarray = explode('-',$row['contact']['landline_tel']);
+$telarray = explode('-',$row['contact_tel']);
 if(intval($telarray[0]) > 0)
 {
 	$landline_tel = $telarray[0];
@@ -87,17 +91,33 @@ if(intval($telarray[2]) > 0)
 {
 	$landline_tel = empty($landline_tel)?$telarray[2]:$landline_tel."-".$telarray[2];
 }
-$shumu=$db->getone("select count(did)  from ".table('personal_jobs_apply')." where jobs_id='{$row['id']}'");
-$category_cn=explode('/',$row['category_cn']);
-$count=count($category_cn);
-$ke1=$count-1;
-$row['category_cn']=$category_cn[$ke1];
-$row['counts']=$shumu['count(did)'];
-$row['start_riqi']=date("n.j",$row['work_start']);
-$row['start_shijian']=date("G:i",$row['work_start']);
-$row['end_riqi']=date("n.j",$row['work_end']);
-$row['end_shijian']=date("G:i",$row['work_end']);
+
+$row['category_cn']=$row['category_name'];
+$row['start_riqi']=date("n.j",$row['list'][0]['start_date']);
+$row['start_shijian']=$row['list'][0]['work_start_time'];
+$row['end_riqi']=date("n.j",$row['list'][0]['end_date']);
+$row['end_shijian']=$row['list'][0]['work_end_time'];
+$row['wage_amount']=$row['list'][0]['parttime_money'];
+$row['address']=$row['list'][0]['adress'];
 $row['contact']['landline_tel'] = $landline_tel;
+$row['sex_cn'] = $row['sex_cn'] == 200 ? '男' : ($row['sex_cn'] == 300 ? '女' : '不限') ;
+$tagSql = "SELECT * FROM ".table('category')." where c_alias='QS_jobtag'";
+$tagArr = $db->getall($tagSql);
+if($row['position_high']) {
+    $row['position_high'] = array_flip(explode(",", $row['position_high']));
+    foreach($tagArr as $tk => $tag) {
+        if(isset($row['position_high'][$tag['c_id']])) {
+           $row['tag_cn'][] = $tag['c_name'];
+        }
+    }
+}
+$row['tag'] = $row['tag'];
+$row['tag_cn'] = $row['tag_cn'];
+if($row['list']) {
+    foreach($row['list'] as $lk => $plist) {
+        $row['amount'] += $plist['parttime_nums'];
+    }
+}
 $smarty->assign('is_show_tel',$show);
 $smarty->assign('show',$row);
 $smarty->assign('interest_show',$interest_show);

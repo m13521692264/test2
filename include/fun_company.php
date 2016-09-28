@@ -173,6 +173,9 @@ function get_company($uid)
 	$result = $db->getone($sql);
 	return $result;
 }
+
+
+
 function distribution_jobs($id,$uid)
 {
 	global $db,$_CFG;
@@ -1178,6 +1181,15 @@ function get_user_info($uid)
 	$sql = "select * from ".table('members')." where uid = '{$uid}' LIMIT 1";
 	return $db->getone($sql);
 }
+ //获取企业资料
+function get_company_by_id($cid)
+{
+	global $db;
+	$sql = "select uid from ".table('company_profile')." where id=".intval($cid)." LIMIT 1 ";
+	$result = $db->getone($sql);
+	return $result;
+}
+
 function get_userprofile($uid)
 {
 	global $db;

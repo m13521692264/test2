@@ -249,6 +249,14 @@ function get_user_info($uid)
 	$sql = "select * from ".table('members')." where uid = ".intval($uid)." LIMIT 1";
 	return $db->getone($sql);
 }
+function get_company_by_id($cid)
+{
+	global $db;
+	$sql = "select uid from ".table('company_profile')." where id=".intval($cid)." LIMIT 1 ";
+	$result = $db->getone($sql);
+	return $result;
+}
+
 function get_resumetpl()
 {
 	global $db;
