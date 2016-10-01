@@ -79,14 +79,14 @@ elseif ($act == 'add_favorites')
 	if(intval($_SESSION['utype']!=2)){
 		exit("请登录后收藏职位");
 	}
-	elseif(add_favorites($id,intval($_SESSION['uid']))==0)
-	{
-	exit("已收藏");
-	}
-	else
-	{
-	exit("ok");
-	}
+        $favData['uid'] = $_SESSION['uid'];
+        $favData['job_id'] = $id;
+        $favRst = https_request_api("job/favJob/",$favData);
+        if(!$favRst['codes']) {
+            exit("已收藏");
+        } else {
+            exit($favRst['msg']);
+        }
 }
 elseif ($act=='del_favorites')
 {

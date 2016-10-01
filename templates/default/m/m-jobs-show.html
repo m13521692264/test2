@@ -108,9 +108,9 @@ var YDB = new YDBOBJ();
 							$("#ysc").show();
 							$("#ysc h4").html(data);
 							$('.layui-layer').css("left",($(window).width() - $('.layui-layer').outerWidth())/2);
-							setTimeout(function () {
-                            window.location.reload();
-                        }, 2000);
+//							setTimeout(function () {
+//                            window.location.reload();
+//                        }, 2000);
 						}
 					}
 				});
@@ -126,8 +126,8 @@ var YDB = new YDBOBJ();
 <style>
     .next_button{
         cursor:pointer;
-		default:true;
-		tags:true;
+        default:true;
+        tags:true;
     }
 </style>
 </head>
@@ -238,7 +238,7 @@ var YDB = new YDBOBJ();
 	</div>
 	<div class="job_foot">
 		<ul>
-			<li class="{#if $show.is_favorites=='1'#}selected{#/if#} next_button" id="collect_job">
+			<li class="{#if $show.is_fav==1#}selected{#/if#} next_button" id="collect_job">
 				<a href="javascript:;"  >
 					<div class="ico1">
 					
@@ -262,7 +262,11 @@ var YDB = new YDBOBJ();
 			</li>
 		</ul>
 		<div class="apply" >
-			<a href="javascript:;" class="next_button" id="jobs_apply" >立即报名</a>
+                    {#if $show.is_enroll == 1#}
+                        <span style="color:#fff;">已报名</span>
+                    {#else#}
+                        <a href="javascript:;" class="next_button" id="jobs_apply" >立即报名</a>
+                    {#/if#}
 		</div>
 	</div>
 

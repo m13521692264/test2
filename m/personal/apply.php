@@ -100,11 +100,12 @@ elseif ($act == 'apply_add')
 {
 
     $postData['job_id']=intval($_POST["job_id"])?intval($_POST["job_id"]):exit("出错了");
-    $postData['job_info_id']=intval($_POST["job_info_id"])?intval($_POST["job_info_id"]):exit("出错了");
+    $postData['job_info_id']=intval($_POST["job_info_id"])?intval($_POST["job_info_id"]):exit("请选择点位");
     $postData['resume_id']= $resumeid = intval($_POST["resume_id"])?intval($_POST["resume_id"]):exit("出错了");
     $postData['enroll_type'] = 100;
     $postData['uid'] = $_SESSION['uid'];
     $postData["date"]=time();
+    $postData['company_id'] = $_POST["company_id"];
     $resume_basic=get_resume_basic($_SESSION['uid'],$postData['resume_id']);
     $resume_basic = array_map("addslashes", $resume_basic);
     if (empty($resume_basic)) {
@@ -233,7 +234,7 @@ elseif ($act == 'apply_add')
             }
             exit("ok");
         }else{
-            exit("err");
+            exit($addRst['msg']);
         }
         }
     }

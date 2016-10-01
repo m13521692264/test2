@@ -14,57 +14,85 @@ require_once(dirname(__FILE__).'/company_common.php');
 $smarty->assign('leftmenu',"recruitment");
 if ($act=='apply_jobs')
 {
-	require_once(QISHI_ROOT_PATH.'include/page.class.php');
-	$joinsql=" LEFT JOIN  ".table('resume')." AS r  ON  a.resume_id=r.id ";
-	$wheresql=" WHERE a.company_uid='{$_SESSION['uid']}' ";
-	$look=intval($_GET['look']);
-	if($look>0)$wheresql.=" AND a.personal_look='{$look}'";
-	$state=intval($_GET['state']);
-	if($state>0)
-	{
-		$joinsql.=" left join ".table('company_label_resume')." as l on l.resume_id=a.resume_id and l.jobs_id=a.jobs_id";
-		$wheresql.=" AND l.resume_state=$state AND l.uid={$_SESSION['uid']} ";
-	}
-	$jobsid=intval($_GET['jobsid']);
-	if($jobsid>0){
-		$wheresql.=" AND a.jobs_id='{$jobsid}' ";
-		$sql="select jobs_name from ".table("jobs")." where id=".intval($_GET['jobsid'])." ";
-		$row=$db->getone($sql);
-		$smarty->assign('jobs_name',$row["jobs_name"]);
-	}
-	$is_apply=intval($_GET['is_apply']);
-	if($is_apply>0)
-	{
-		if($is_apply==1)
-		{
-			$wheresql.=" AND a.is_apply=1 ";
-		}
-		else
-		{
-			$wheresql.=" AND a.is_apply=0 ";
-		}
-		
-	}
-	$perpage=10;
-	$total_sql="SELECT COUNT(*) AS num FROM ".table('personal_jobs_apply')." AS a  ".$joinsql." {$wheresql} ";
-	$total=$db->get_total($total_sql);
-	$page = new page(array('total'=>$total, 'perpage'=>$perpage));
-	$offset=($page->nowindex-1)*$perpage;
-	$smarty->assign('act',$act);
-	$smarty->assign('title','收到的职位申请 - 企业会员中心 - '.$_CFG['site_name']);
-	$smarty->assign('jobs_apply',get_apply_jobs($offset,$perpage,$joinsql.$wheresql));
-	//var_dump(get_apply_jobs($offset,$perpage,$joinsql.$wheresql));die;
-	
-	if($total>$perpage)
-	{
-		$smarty->assign('page',$page->show(3));
-	}
-	$smarty->assign('jobsid',$jobsid);
-	$smarty->assign('count',count_jobs_apply($_SESSION['uid'],0,$jobsid));
-	$smarty->assign('count1',count_jobs_apply($_SESSION['uid'],1,$jobsid));
-	$smarty->assign('count2',count_jobs_apply($_SESSION['uid'],2,$jobsid));
-	$smarty->assign('jobs',get_auditjobs($_SESSION['uid']));
-	$smarty->display('member_company/company_apply_jobs.htm');
+    $_GET['look'] && $listData['check_status'] = $_GET['look'];
+    $_GET['job_id'] && $listData['job_id'] = $_GET['job_id'];
+    $_GET['date'] && $listData['date'] = $_GET['date'];
+    $_GET['position_type'] && $listData['position_type'] = $_GET['position_type'];
+    $_GET['sid'] && $listData['job_info_id'] = $_GET['sid'];
+
+    $companyInfo = get_company_by_uid($_SESSION['uid']);
+    $listData['company_id'] = $companyInfo['id'];
+    $resumeList = https_request_api('/enroll/list', $listData);
+    require_once(QISHI_ROOT_PATH.'include/page.class.php');
+    if($resumeList['codes']) {
+        showmsg("获取审核列表失败！",1);
+    }
+    $listData['company_id'] = $companyInfo['id'];
+    $jobListTmp = https_request_api('job/list/', $listData);
+    if(!$jobListTmp['codes'] && $jobListTmp['data']['list']) {
+        foreach($jobListTmp['data']['list'] as $jlk => $job) {
+            if($job['list']) {
+                foreach($job['list'] as $jk => $jv) {
+                    $station_list[$jv['id']] = $jv;
+                    $sData[] = $jv['start_date'];
+                    $eData[] = $jv['end_date'];
+                }
+            }
+            $jobList[$job['id']] = $job;
+        }
+    }
+    $perpage=10;
+    $total= $resumeList['data']['totalCount'] ? $resumeList['data']['totalCount'] : 0;
+    $page = new page(array('total'=>$total, 'perpage'=>$perpage));
+    $offset=($page->nowindex-1)*$perpage;
+    $smarty->assign('act',$act);
+    $smarty->assign('title','收到的职位申请 - 企业会员中心 - '.$_CFG['site_name']);
+    foreach($resumeList['data']['list'] as $resumeKey => &$resume) {
+        $jobInfo = $jobList[$resume['job_id']];
+        if($jobInfo['list']) {
+            foreach($jobInfo['list'] as $jk => $jobInfoV) {
+                $sData[] = $jobInfoV['start_date'];
+                $eData[] = $jobInfoV['end_date'];
+                $resume['position_list'][$jobInfo['job_id']]['name'] = $jobInfoV['address'];
+                $resume['position_list'][$jobInfo['job_id']]['id'] = $jobInfoV['job_id'];
+            }
+        }
+        $user_resume = current(get_resume_uid($resume['uid']));
+        $resume['telephone'] = $user_resume['telephone'];
+        $resume['fullname'] = $user_resume['fullname'];
+        $resume['sex_cn'] = $user_resume['sex_cn'];
+        $resume['education_cn'] = $user_resume['education_cn'];
+        $resume['audit'] = $user_resume['audit'];
+        $resume['nature_cn'] = $user_resume['nature_cn'];
+        $resume['education_cn'] = $user_resume['education_cn'];
+        $resume['display'] = $user_resume['display'];
+        $resume['resume_url'] = $user_resume['resume_url'];
+    }
+    asort($sData);
+    arsort($eData);
+    $startDate = current($sData);
+    $endDate = current($eData);
+    $days = ceil(($endDate - $startDate) / 86400);
+    if($days >= 0) {
+        for($i = 0; $i <= $days; $i++) {
+            $work_date[] = strtotime('+'.$i.'days', $startDate);
+        }
+    }
+    $smarty->assign('jobs_apply', $resumeList['data']['list']);
+   
+    if($total>$perpage)
+    {
+            $smarty->assign('page',$page->show(3));
+    }
+    //$smarty->assign('jobsid',$jobsid);
+    $smarty->assign('work_date', $work_date);
+    $smarty->assign('count', $resumeList['data']['totalCount']);
+    $smarty->assign('count1', $resumeList['data']['nvcount']);
+    $smarty->assign('count2', $resumeList['data']['vcount']);
+    $smarty->assign('joblist', $jobList);
+    $smarty->assign('station_list',$station_list);
+    $smarty->assign('jobs',$resumeList['data']['list']);
+    $smarty->display('member_company/company_apply_jobs.htm');
 }
 elseif ($act=='apply_jobs_weixin')
 {
@@ -541,6 +569,16 @@ elseif($act == "refresh_appointment")
 			exit("预约刷新成功！");
 		}
 	}
+} elseif($act = 'update_enroll') {
+    if(!$_POST['resume_id']) {
+        exit('报名信息不存在');
+    }
+    $_POST['station'] && $data['job_info_id'] = $_POST['station'];
+    $_POST['position_type'] && $data['position_type'] = $_POST['position_type'];
+    $_POST['desc'] && $data['desc'] = urldecode($_POST['desc']);
+    $_POST['resume_id'] && $data['enroll_id'] = $_POST['resume_id'];
+    $rst = https_request_api('enroll/update', $data);
+    exit('ok');
 }
 unset($smarty);
 ?>

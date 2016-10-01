@@ -1181,11 +1181,31 @@ function get_user_info($uid)
 	$sql = "select * from ".table('members')." where uid = '{$uid}' LIMIT 1";
 	return $db->getone($sql);
 }
+function get_resume_uid($uid)
+{
+	global $db;
+	$uid=intval($uid);
+	$result = $db->query("select * FROM ".table('resume')." where uid='{$uid}'");
+	while($row = $db->fetch_array($result))
+	{ 
+	$row['resume_url']=url_rewrite('QS_resumeshow',array('id'=>$row['id']),1,$row['subsite_id']);
+	$row_arr[] = $row;
+	}
+	return $row_arr;	
+}
  //获取企业资料
 function get_company_by_id($cid)
 {
 	global $db;
 	$sql = "select uid from ".table('company_profile')." where id=".intval($cid)." LIMIT 1 ";
+	$result = $db->getone($sql);
+	return $result;
+}
+
+function get_company_by_uid($uid)
+{
+	global $db;
+	$sql = "select * from ".table('company_profile')." where uid=".intval($uid)." LIMIT 1 ";
 	$result = $db->getone($sql);
 	return $result;
 }
