@@ -413,6 +413,27 @@ function get_resume_basic($uid,$id)
 	return $info;
 	}
 }
+
+function get_resume_basic_by_uid($id)
+{
+	global $db;
+	$id=intval($id);
+	$val=$db->getone("select * from ".table('resume')." where uid='{$id}' LIMIT 1 ");
+	if ($val['display_name']=="2")
+	{
+	$val['fullname']="N".str_pad($val['id'],7,"0",STR_PAD_LEFT);
+	}
+	elseif ($val['display_name']=="3")
+	{
+		if($val['sex']==1){
+			$val['fullname']=cut_str($val['fullname'],1,0,"先生");
+		}
+		elseif($val['sex']==2){
+			$val['fullname']=cut_str($val['fullname'],1,0,"女士");
+		}
+	}
+	return $val;
+}
 //获取教育经历列表
 function get_resume_education($uid,$pid)
 {

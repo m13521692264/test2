@@ -1673,6 +1673,26 @@ function get_resume_basic($id)
 	}
 	return $val;
 }
+function get_resume_basic_by_uid($id)
+{
+	global $db;
+	$id=intval($id);
+	$val=$db->getone("select * from ".table('resume')." where uid='{$id}' LIMIT 1 ");
+	if ($val['display_name']=="2")
+	{
+	$val['fullname']="N".str_pad($val['id'],7,"0",STR_PAD_LEFT);
+	}
+	elseif ($val['display_name']=="3")
+	{
+		if($val['sex']==1){
+			$val['fullname']=cut_str($val['fullname'],1,0,"先生");
+		}
+		elseif($val['sex']==2){
+			$val['fullname']=cut_str($val['fullname'],1,0,"女士");
+		}
+	}
+	return $val;
+}
 //推荐人才
 function get_concern_id($uid)
 {

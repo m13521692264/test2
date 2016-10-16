@@ -73,9 +73,9 @@ $(document).ready(function(){
 	});
         $('.u_change').on('change', function(e){
                 var resume_id =$(this).attr('resume_id');
-		var desc= $("#desc").val();
-                var position_type= $("#user_position_type").val();
-                var station= $("#station").val();
+		var desc= $("#desc_"+resume_id).val();
+                var position_type= $("#user_position_type_"+resume_id).val();
+                var station= $("#station_"+resume_id).val();
                 $.post('{#$QISHI.site_dir#}user/company/company_recruitment.php?act=update_enroll', {"desc":desc, "position_type":position_type,"station":station, "resume_id":resume_id}, function(data) 
 		{
 			if(data=="ok")
@@ -250,7 +250,7 @@ $(document).ready(function(){
 						</div>
                         <div class="c-item f-left content1-1">
                         	
-                    <select name="user_position_type" id="user_position_type" class="u_change bdr0" resume_id="{#$list.id#}">
+                    <select name="user_position_type" id="user_position_type_{#$list.id#}" class="u_change bdr0" resume_id="{#$list.id#}">
                         <option value="100" {#if $list.position_type == 100 #}selected{#/if#}>ºÊ÷∞</option>
                         <option value="200" {#if $list.position_type == 200#}selected{#/if#}>∂Ωµº</option>
                     </select>
@@ -261,7 +261,7 @@ $(document).ready(function(){
                         </div>
 						<div class="c-item f-left content3">{#if $list.age#}{#$list.age#}ÀÍ/{#/if#}{#$list.education_cn#}/{#$list.experience_cn#}/{#$list.sex_cn#}</div>
 						<div class="c-item f-left content7" style="width:200px;">
-                        <select name="station" id="station" class="u_change bdr0" resume_id="{#$list.id#}">
+                        <select name="station" id="station_{#$list.id#}" class="u_change bdr0" resume_id="{#$list.id#}">
                             {#foreach from=$list.position_list item=position#}
                                 <option value="{#$position.id#}">{#$position.name#}</option>
                             {#/foreach#}
@@ -273,7 +273,7 @@ $(document).ready(function(){
                         {#if $list.enroll_type == 100 #}∑Ò{#else#} «{#/if#}
                         </div>
                         <div class="c-item f-left content7-1">
-                        	<input type="text"  name="desc" id="desc" resume_id="{#$list.id#}" value="{#$list.remark#}" class="u_change bdr1" style="width:100px;"/>
+                        	<input type="text"  name="desc" id="desc_{#$list.id#}" resume_id="{#$list.id#}" value="{#$list.remark#}" class="u_change bdr1" style="width:100px;"/>
                         </div>
 					</div>
 					<div class="data-detail">

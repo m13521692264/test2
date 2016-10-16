@@ -1,3 +1,4 @@
 /data/config.php
 /temp/
 *.txt
+data/sessions
