@@ -40,4 +40,30 @@ if($act == 'sign')
     $data['status']  = $_POST['status'];
     $rst = https_request_api('enroll/leaveEarly', $data);
     exit($rst['msg']);
+} elseif($act == 'eveluate') {
+    $data['enroll_id'] = $_POST['eid'];
+    $data['uid'] = $_POST['uid'];
+    $typekey = $_POST['typekey'];
+    $data['evaluate_uid'] = $_SESSION['uid'];
+    $_POST['content'] && $data['evaluate_content'] = iconv('utf8', 'gbk', $_POST['content']);
+    $_POST['score'] && $data['score'] = $_POST['score'];
+    switch($typeKey) {
+        case 'punctual':
+            $data['type'] = 101;
+            break;
+        case 'earnest':
+            $data['type'] = 102;
+            break;
+        case 'effect':
+            $data['type'] = 103;
+            break;
+        case 'performance':
+            $data['type'] = 104;
+            break;
+        case 'ability':
+            $data['type'] = 105;
+            break;
+    }
+    $rst = https_request_api('/job/evaluate', $data);
+    var_dump($rst);exit;
 }

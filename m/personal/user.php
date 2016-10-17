@@ -823,8 +823,6 @@ elseif($act == "signIn_manage") {
             }
         }
     }
-//    echo '<pre>';
-//    var_dump($passList);exit;
     $smarty->assign('passList', $userSignInfo);
     $smarty->assign('ptInfo', $ptInfo['data']);
     $smarty->assign('cdate', $_GET['work_date'] ? $_GET['work_date'] : 0);
@@ -902,6 +900,187 @@ elseif($act == "signOut_manage") {
     $smarty->assign('ptInfo', $ptInfo['data']);
     $smarty->assign('cdate', $_GET['work_date'] ? $_GET['work_date'] : 0);
     $smarty->display('m/personal/m-signOut-manage.html');
+} elseif($act == "evelua_manage") {
+    if($_GET['id']) {
+        $job_info_id = $_GET['id'];
+        $ptInfo = https_request_api('job/jobPtInfo', array('job_info_id' => $job_info_id));
+        if($ptInfo['codes']) {
+            showmsg($ptInfo['msg']);  
+        }
+         if($ptInfo['data']['dd_uid']) {
+            $ddInfo = get_user_info($ptInfo['data']['dd_uid']);
+        }
+        $ptInfo['data']['dd_name'] = $ddInfo['username'];
+        $ptInfo['data']['dd_mobile'] = $ddInfo['mobile'];
+        $ptInfo['data']['job_info_id'] = $job_info_id;
+        $jobInfoTmp = https_request_api('job/info/'.$ptInfo['data']['job_id']);
+        if(!isset($jobInfoTmp['data']) || !$jobInfoTmp['data']) {
+            showmsg($jobInfoTmp['msg']);  
+        }
+
+        $days = intval(ceil(($ptInfo['data']['end_date']-$ptInfo['data']['start_date'])/ 86400));
+        if($days > 0) {
+            for($i = 0;$i < $days; $i++) {
+                $ptInfo['data']['work_date'][] = strtotime('+'.$i.' days', $ptInfo['data']['start_date']);
+            }
+        }
+        $jobInfo = $jobInfoTmp['data'];
+        $ptInfo['data']['job_name'] = $jobInfo['job_name'];
+        $sdata['job_id'] = $ptInfo['data']['job_id'];
+        $sdata['job_info_id'] = $ptInfo['data']['id'];
+        $sdata['station_type'] = 100;
+        $sdata['status'] = 200;
+//        $_GET['evaluate_status'] && $sdata['evaluate_status'] = $_GET['evaluate_status'];
+        $_GET['work_date'] && $sdata['date'] = $_GET['work_date'];
+        $enrollListTmp = https_request_api('enroll/list', $sdata);
+        if($enrollListTmp['data']['totalCount'] > 0) {
+            foreach($enrollListTmp['data']['list'] as $pk => &$enrollInfo) {
+                $resumeInfo = get_resume_basic_by_uid($enrollInfo['uid']);
+                $userInfo = get_user_info($enrollInfo['uid']);
+                $userEvaluateInfo[$enrollInfo['uid']]['avatars'] = $userInfo['avatars'];
+                $userEvaluateInfo[$enrollInfo['uid']]['mobile'] = $resumeInfo['telephone'];
+                $userEvaluateInfo[$enrollInfo['uid']]['name'] = $resumeInfo['fullname'];
+                $userEvaluateInfo[$enrollInfo['uid']]['enroll_id'] = $enrollInfo['id'];
+                $userEvaluateInfo[$enrollInfo['uid']]['evaluate_status'] = $enrollInfo['evaluate_status'];
+                if($enrollInfo['evaluate_status'] == 200) {
+                    $enrollInfoTmp = https_request_api('job/evaluateInfo', ['enroll_id' => $enrollInfo['id']]);
+                    for($i=1;$i<=5;$i++) {
+                        if($i < $enrollInfoTmp['data']['punctual']) {
+                            $userEvaluateInfo[$enrollInfo['uid']]['punctual'] .= '<i class="selected"></i>';
+                        } else {
+                            $userEvaluateInfo[$enrollInfo['uid']]['punctual'] .= '<i></i>';
+
+                        }
+                    }
+                    switch ($userEvaluateInfo[$enrollInfo['uid']]['punctual']) {
+                        case 0:
+                            $userEvaluateInfo[$enrollInfo['uid']]['punctual_txt'] = '很差';
+                            break;
+                        case 1:
+                            $userEvaluateInfo[$enrollInfo['uid']]['punctual_txt'] = '差';
+                            break;
+                        case 2:
+                            $userEvaluateInfo[$enrollInfo['uid']]['punctual_txt'] = '一般';
+                            break;
+                        case 3:
+                            $userEvaluateInfo[$enrollInfo['uid']]['punctual_txt'] = '好';
+                            break;
+                        case 4:
+                            $userEvaluateInfo[$enrollInfo['uid']]['punctual_txt'] = '很好';
+                            break;
+                    }
+                    for($i=1;$i<=5;$i++) {
+                        if($i < $enrollInfoTmp['data']['earnest']) {
+                            $userEvaluateInfo[$enrollInfo['uid']]['earnest'] .= '<i class="selected"></i>';
+                        } else {
+                            $userEvaluateInfo[$enrollInfo['uid']]['earnest'] .= '<i></i>';
+
+                        }
+                    }
+                     switch ($userEvaluateInfo[$enrollInfo['uid']]['earnest']) {
+                        case 0:
+                            $userEvaluateInfo[$enrollInfo['uid']]['earnest_txt'] = '很差';
+                            break;
+                        case 1:
+                            $userEvaluateInfo[$enrollInfo['uid']]['earnest_txt'] = '差';
+                            break;
+                        case 2:
+                            $userEvaluateInfo[$enrollInfo['uid']]['earnest_txt'] = '一般';
+                            break;
+                        case 3:
+                            $userEvaluateInfo[$enrollInfo['uid']]['earnest_txt'] = '好';
+                            break;
+                        case 4:
+                            $userEvaluateInfo[$enrollInfo['uid']]['earnest_txt'] = '很好';
+                            break;
+                    }
+                    for($i=1;$i<=5;$i++) {
+                        if($i < $enrollInfoTmp['data']['effect']) {
+                            $userEvaluateInfo[$enrollInfo['uid']]['effect'] .= '<i class="selected"></i>';
+                        } else {
+                            $userEvaluateInfo[$enrollInfo['uid']]['effect'] .= '<i></i>';
+                        }
+                    }
+                    switch ($userEvaluateInfo[$enrollInfo['uid']]['earnest']) {
+                        case 0:
+                            $userEvaluateInfo[$enrollInfo['uid']]['earnest_txt'] = '很差';
+                            break;
+                        case 1:
+                            $userEvaluateInfo[$enrollInfo['uid']]['earnest_txt'] = '差';
+                            break;
+                        case 2:
+                            $userEvaluateInfo[$enrollInfo['uid']]['earnest_txt'] = '一般';
+                            break;
+                        case 3:
+                            $userEvaluateInfo[$enrollInfo['uid']]['earnest_txt'] = '好';
+                            break;
+                        case 4:
+                            $userEvaluateInfo[$enrollInfo['uid']]['earnest_txt'] = '很好';
+                            break;
+                    }
+                    for($i=1;$i<=5;$i++) {
+                        if($i < $enrollInfoTmp['data']['performance']) {
+                            $userEvaluateInfo[$enrollInfo['uid']]['performance'] .= '<i class="selected"></i>';
+                        } else {
+                            $userEvaluateInfo[$enrollInfo['uid']]['performance'] .= '<i></i>';
+
+                        }
+                    }
+                    switch ($userEvaluateInfo[$enrollInfo['uid']]['performance']) {
+                        case 0:
+                            $userEvaluateInfo[$enrollInfo['uid']]['performance_txt'] = '很差';
+                            break;
+                        case 1:
+                            $userEvaluateInfo[$enrollInfo['uid']]['performance_txt'] = '差';
+                            break;
+                        case 2:
+                            $userEvaluateInfo[$enrollInfo['uid']]['performance_txt'] = '一般';
+                            break;
+                        case 3:
+                            $userEvaluateInfo[$enrollInfo['uid']]['performance_txt'] = '好';
+                            break;
+                        case 4:
+                            $userEvaluateInfo[$enrollInfo['uid']]['performance_txt'] = '很好';
+                            break;
+                    }
+                    for($i=1;$i<=5;$i++) {
+                        if($i < $enrollInfoTmp['data']['ability']) {
+                            $userEvaluateInfo[$enrollInfo['uid']]['ability'] .= '<i class="selected"></i>';
+                        } else {
+                            $userEvaluateInfo[$enrollInfo['uid']]['ability'] .= '<i></i>';
+                        }
+                    }
+                    switch ($userEvaluateInfo[$enrollInfo['uid']]['ability']) {
+                        case 0:
+                            $userEvaluateInfo[$enrollInfo['uid']]['ability_txt'] = '很差';
+                            break;
+                        case 1:
+                            $userEvaluateInfo[$enrollInfo['uid']]['ability_txt'] = '差';
+                            break;
+                        case 2:
+                            $userEvaluateInfo[$enrollInfo['uid']]['ability_txt'] = '一般';
+                            break;
+                        case 3:
+                            $userEvaluateInfo[$enrollInfo['uid']]['ability_txt'] = '好';
+                            break;
+                        case 4:
+                            $userEvaluateInfo[$enrollInfo['uid']]['ability_txt'] = '很好';
+                            break;
+                    }
+//                    $userEvaluateInfo[$enrollInfo['uid']]['punctual'] = $enrollInfoTmp['data']['punctual'];
+//                    $userEvaluateInfo[$enrollInfo['uid']]['earnest'] = $enrollInfoTmp['data']['earnest'];
+//                    $userEvaluateInfo[$enrollInfo['uid']]['effect'] = $enrollInfoTmp['data']['effect'];
+//                    $userEvaluateInfo[$enrollInfo['uid']]['performance'] = $enrollInfoTmp['data']['performance'];
+//                    $userEvaluateInfo[$enrollInfo['uid']]['ability'] = $enrollInfoTmp['data']['ability'];
+                    $userEvaluateInfo[$enrollInfo['uid']]['evaluate_content'] = $enrollInfoTmp['data']['evaluate_content'];
+                }
+            }
+        }
+    }
+    $smarty->assign('evaluateList', $userEvaluateInfo);
+    $smarty->assign('ptInfo', $ptInfo['data']);
+    $smarty->assign('cdate', $_GET['work_date'] ? $_GET['work_date'] : 0);
+    $smarty->display('m/personal/m-evelua-manage.html');
 }
 elseif($act == "resume_train_add")
 {

@@ -81,7 +81,6 @@ $(function(){
 			var i = $(this).index();
 			obj.find('i').removeClass('selected');
 			obj.find('i:lt('+ (i+1) +')').addClass('selected');
-			
 			if(i==0){
 				var txt = 'ºÜ²î';
 			}
@@ -97,6 +96,12 @@ $(function(){
 			if(i==4){
 				var txt = 'ºÜºÃ';
 			}
+                        $.post("personal_ajax.php", {"act":"eveluate","eid":obj.data('eid'), "typekey":obj.data('key'), "uid":obj.data('uid'),"score":i+1},
+                            function (data,textStatus)
+                             {
+                                //location.reload();
+                             }
+                        );
 			obj.find('span').html(txt);
 		})
 	})
@@ -105,7 +110,7 @@ $(function(){
 	$('.comment_list .txtarea').each(function(){
 		var max = 100;
 		var obj = $(this);
-		obj.find('textarea').keyup(function(){
+		obj.find('textarea').change(function(){
 			var l = $(this).val().length;
 			var l2 = max-l > 0 ? max-l :0;
 			if(l2==0){
@@ -113,6 +118,12 @@ $(function(){
 				$(this).val(num); 
 			}
 			obj.find('h4 i').html(l2);
+                        $.post("personal_ajax.php", {"act":"eveluate","eid":$(this).data('eid'),"uid":$(this).data('uid'),"content":$(this).val()},
+                            function (data,textStatus)
+                             {
+                                //location.reload();
+                             }
+                        );
 		})
 	})
 	
