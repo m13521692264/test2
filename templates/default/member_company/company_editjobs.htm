@@ -437,9 +437,9 @@ $("#Form1").validate({
                         </table>
                 </div>
             <!-- 职位类别弹出框 End-->		
-              <input name="topclass" id="topclass" type="hidden" value="{#$jobs.topclass#}" />	
-              <input name="category" id="category" type="hidden" value="{#$jobs.category#}" />		
-              <input name="subclass" id="subclass" type="hidden" value="{#$jobs.subclass#}" />		
+              <input name="topclass" id="topclass" type="hidden" value="1" />	
+              <input name="category" id="category" type="hidden" value="1065" />		
+              <input name="subclass" id="subclass" type="hidden" value="{#$jobs.category_id#}" />		
               <input name="category_cn" id="category_cn" type="hidden" value="{#$jobs.category_cn#}" />			</td>
 			<td>&nbsp;</td>
 		  </tr>
@@ -641,30 +641,6 @@ $("#Form1").validate({
 		  </tr>
 
 	    </table>
-        
-         <div class="titleH2"><span>BD经理配置</span></div>
-
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tableall">
-
-		  <tr>
-
-			<td width="125" align="right" valign="top"><span class="nec">手 机 号：</span></td>
-
-			<td>
-					<input name="amount" type="text" value="15512346789" class="bdr1"/>	
-                      <a href="#">添加</a>
-                <p style="clear:both; color:red; font-size:12px;">请输入正确的手机号</p>
-           			  </td>
-		</tr>
-           <tr>
-
-			<td width="125" align="right">  BD 经 理：</td>
-
-			<td>
-						刘德华 15512346789
-                        <a href="#">删除</a>			</td>
-		</tr>
-	    </table>
 
          <div class="titleH2"><span>工作地点</span></div>
 
@@ -680,9 +656,7 @@ $("#Form1").validate({
                     <tr>
                       <td align="right"></td>
                       <td>
-              {#$plist.address#}，{#$plist.parttime_nums#}人，{#$plist.parttime_money#}元/人，{#$plist.start_date#}-{#$plist.start_date#}
-              <a href="###" onclick="openSetConfig();">修改 </a>
-              <a href="###" onclick="copySets();">复制</a>
+              {#$plist.address#}，{#$plist.parttime_nums#}人，{#$plist.parttime_money#}元/人，{#$plist.start_date#}-{#$plist.end_date#}
               <a href="#">删除</a>
               </td>
                       </tr>

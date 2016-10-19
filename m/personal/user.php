@@ -679,61 +679,82 @@ elseif($act == "resume_education_del")
 // 培训经历 
 elseif($act == "resume_train")
 {
-	$smarty->cache = false;
-	$id=intval($_GET['pid']);
-	$resume_train_list=get_resume_training(intval($_SESSION['uid']),$id);
-	$smarty->assign("resume_train_list",$resume_train_list);
-	$smarty->display('m/personal/m-train-experience.html');
+    $smarty->cache = false;
+    $id=intval($_GET['pid']);
+    $resume_train_list=get_resume_training(intval($_SESSION['uid']),$id);
+    $smarty->assign("resume_train_list",$resume_train_list);
+    $smarty->display('m/personal/m-train-experience.html');
 }
 elseif($act == "work_card") {
-    if($_POST) {
-        
-    } else {
-        if($_GET['id']) {
-            $einfo = https_request_api('enroll/info', array('enroll_id' => $_GET['id']));
-            if($einfo['codes'] || empty($einfo['data'])) {
-              showmsg($einfo['msg']);  
-            }
-            $job_info_id = $einfo['data']['job_info_id'];
-            $pyInfo = https_request_api('job/jobPtInfo', array('job_info_id' => $job_info_id));
-            if($pyInfo['codes']) {
-                showmsg($pyInfo['msg']);  
-            }
-            if($pyInfo['data']['dd_uid']) {
-                $ddInfo = get_user_info($pyInfo['data']['dd_uid']);
-            }
-            $pyInfo['data']['dd_name'] = $ddInfo['username'];
-            $pyInfo['data']['dd_mobile'] = $ddInfo['mobile'];
-            $pyInfo['data']['job_info_id'] = $job_info_id;
-            $pyInfo['data']['enroll_id'] = $_GET['id'];
-            
-            $signList = https_request_api('job/pastList', array('job_info_id' => $job_info_id, 'uid' => $einfo['data']['uid']));
-            
-            if($signList['data']['list']) {
-                foreach($signList['data']['list'] as $sk => $sv) {
-                    if($sv['sign_type'] == 100) {
-                        if($einfo['data']['work_date'] == $sv['work_date']) {
-                            $signIned = true;
-                        }
-                        $sv['sign_time'] = date('m月d日 H:i:s', $sv['sign_time']);
-                        $signIn[] = $sv;
-                    } elseif($sv['sign_type'] == 200) {
-                        if($einfo['data']['work_date'] == $sv['work_date']) {
-                            $signOuted = true;
-                        }
-                        $sv['sign_time'] = date('m月d日 H:i:s', $sv['sign_time']);
-                        $signOut[] = $sv;
+    if($_GET['id']) {
+        $einfo = https_request_api('enroll/info', array('enroll_id' => $_GET['id']));
+        if($einfo['codes'] || empty($einfo['data'])) {
+          showmsg($einfo['msg']);  
+        }
+        $job_info_id = $einfo['data']['job_info_id'];
+        $pyInfo = https_request_api('job/jobPtInfo', array('job_info_id' => $job_info_id));
+        if($pyInfo['codes']) {
+            showmsg($pyInfo['msg']);  
+        }
+        if($pyInfo['data']['dd_uid']) {
+            $ddInfo = get_user_info($pyInfo['data']['dd_uid']);
+        }
+        $pyInfo['data']['dd_name'] = $ddInfo['username'];
+        $pyInfo['data']['dd_mobile'] = $ddInfo['mobile'];
+        $pyInfo['data']['job_info_id'] = $job_info_id;
+        $pyInfo['data']['enroll_id'] = $_GET['id'];
+        $jobInfoTmp = https_request_api('job/info/'.$pyInfo['data']['job_id']);
+        if(!$jobInfoTmp['data']) {
+            showmsg($jobInfoTmp['msg']);  
+        }
+        $signList = https_request_api('job/pastList', array('job_info_id' => $job_info_id, 'uid' => $einfo['data']['uid']));
+
+        if($signList['data']['list']) {
+            foreach($signList['data']['list'] as $sk => $sv) {
+                if($sv['sign_type'] == 100) {
+                    if($einfo['data']['work_date'] == $sv['work_date']) {
+                        $signIned = true;
                     }
+                    $sv['sign_time'] = date('m月d日 H:i:s', $sv['sign_time']);
+                    $signIn[] = $sv;
+                } elseif($sv['sign_type'] == 200) {
+                    if($einfo['data']['work_date'] == $sv['work_date']) {
+                        $signOuted = true;
+                    }
+                    $sv['sign_time'] = date('m月d日 H:i:s', $sv['sign_time']);
+                    $signOut[] = $sv;
                 }
             }
         }
-        $smarty->assign('signOuted', $signOuted ? $signOuted : false);
-        $smarty->assign('signIned', $signIned ? $signIned : false);
-        $smarty->assign('signInList', $signIn);
-        $smarty->assign('signOutList', $signOut ? $signOut : array());
-        $smarty->assign('ptInfo', $pyInfo['data']);
-        $smarty->display('m/personal/m-work-card.html');
+        $where['uid'] = $_SESSION['uid'];
+        $where['job_id'] = $pyInfo['data']['job_id'];
+        $where['job_info_id'] = $pyInfo['data']['id'];
+        $where['enroll_type'] = 200;
+        $workListTmp = https_request_api('/enroll/list',$where);
+        if($workListTmp['data']['list']) {
+            foreach($workListTmp['data']['list'] as $wk => $v) {
+                $workInfo['status'] = $v['status'];
+                $workInfo['work_date'] = $v['work_date'];
+                $workInfo['create_time'] = $v['create_time'];
+                $workList[] = $workInfo;
+                if(date('Ymd', $v['work_date']) == date('Ymd', strtotime("+1 days", time()))) {
+                    $isxy = true;
+                }
+            }
+        } else {
+            $workList = [];
+        }
     }
+    $smarty->assign('isxy', $isxy);
+    $smarty->assign('companyId', $jobInfoTmp['data']['company_id']);
+    $smarty->assign('workList', $workList);
+    $smarty->assign('signOuted', $signOuted ? $signOuted : false);
+    $smarty->assign('signIned', $signIned ? $signIned : false);
+    $smarty->assign('xxDate', strtotime("+1 days", time()));
+    $smarty->assign('signInList', $signIn);
+    $smarty->assign('signOutList', $signOut ? $signOut : array());
+    $smarty->assign('ptInfo', $pyInfo['data']);
+    $smarty->display('m/personal/m-work-card.html');
 }elseif($act == "work_manage") {
     if($_GET['id']) {
         $einfo = https_request_api('enroll/info', array('enroll_id' => $_GET['id']));
@@ -823,6 +844,8 @@ elseif($act == "signIn_manage") {
             }
         }
     }
+    $smarty->assign('workdate', $_GET['work_date']);
+    $smarty->assign('show_type', $_GET['show_type']);
     $smarty->assign('passList', $userSignInfo);
     $smarty->assign('ptInfo', $ptInfo['data']);
     $smarty->assign('cdate', $_GET['work_date'] ? $_GET['work_date'] : 0);
@@ -930,7 +953,6 @@ elseif($act == "signOut_manage") {
         $sdata['job_info_id'] = $ptInfo['data']['id'];
         $sdata['station_type'] = 100;
         $sdata['status'] = 200;
-//        $_GET['evaluate_status'] && $sdata['evaluate_status'] = $_GET['evaluate_status'];
         $_GET['work_date'] && $sdata['date'] = $_GET['work_date'];
         $enrollListTmp = https_request_api('enroll/list', $sdata);
         if($enrollListTmp['data']['totalCount'] > 0) {
@@ -1067,11 +1089,6 @@ elseif($act == "signOut_manage") {
                             $userEvaluateInfo[$enrollInfo['uid']]['ability_txt'] = '很好';
                             break;
                     }
-//                    $userEvaluateInfo[$enrollInfo['uid']]['punctual'] = $enrollInfoTmp['data']['punctual'];
-//                    $userEvaluateInfo[$enrollInfo['uid']]['earnest'] = $enrollInfoTmp['data']['earnest'];
-//                    $userEvaluateInfo[$enrollInfo['uid']]['effect'] = $enrollInfoTmp['data']['effect'];
-//                    $userEvaluateInfo[$enrollInfo['uid']]['performance'] = $enrollInfoTmp['data']['performance'];
-//                    $userEvaluateInfo[$enrollInfo['uid']]['ability'] = $enrollInfoTmp['data']['ability'];
                     $userEvaluateInfo[$enrollInfo['uid']]['evaluate_content'] = $enrollInfoTmp['data']['evaluate_content'];
                 }
             }

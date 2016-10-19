@@ -151,11 +151,8 @@ if ($act=='jobs')
 }
 elseif ($act=='addjobs')
 {
-
 		$smarty->assign('user',$user);
 		$smarty->assign('subsite',get_all_subsite());
-//    echo '<pre>';
-//    var_dump(get_all_subsite());exit;
 
 		if ($cominfo_flge)
 		{
@@ -294,7 +291,7 @@ elseif ($act=='addjobs_save')
     $addData['company_id'] = $company_profile['id'];
     $addData['company_name'] = $company_profile['companyname'];
     $addData['job_type'] = intval($_POST['nature']);
-    $addData['category_id'] = !empty($_POST['category'])?intval($_POST['category']):showmsg('请选择职位类别！',1);
+    $addData['category_id'] = !empty($_POST['subclass'])?intval($_POST['subclass']):showmsg('请选择职位类别！',1);
     $addData['category_name'] = trim($_POST['category_cn']);
     $addData['position_high'] = trim($_POST['tag']);
     $addData['position_character'] = trim($_POST['tags']);

@@ -18,7 +18,9 @@ if($act == 'sign')
     $data['sign_address'] = iconv("utf8", "gbk", $_POST['signAddr']);
     $data['remark'] = iconv("utf8", "gbk", $_POST['signDesc']);
     $data['sign_type'] = $_POST['type'];
-    $data['sign_pic'] = 'http://www.baidu.com';
+    if($_POST['pics']) {
+        $data['sign_pic'] = implode("\n", $_POST['pics']);
+    }
     $rst = https_request_api('/job/past', $data);
     exit($rst['msg']);
 } elseif($act == 'stood') {
@@ -65,5 +67,42 @@ if($act == 'sign')
             break;
     }
     $rst = https_request_api('/job/evaluate', $data);
-    var_dump($rst);exit;
+} elseif($act == 're_enroll') {
+    if(!$_POST['jobid']) {
+        exit('jobid不能为空!');
+    }
+    if(!$_POST['jobinfo_id']) {
+        exit('jobinfoid不能为空!');
+    }
+    $data['job_id'] = $_POST['jobid'];
+    $data['job_info_id'] = $_POST['jobinfo_id'];
+    $data['uid'] = $_SESSION['uid'];
+    $data['enroll_type'] = 200;
+    $nextDay = strtotime(date('Y-m-d', time()));
+    $data['date'] = strtotime('+1 days', $nextDay);
+    $resumeInfo = get_resume_basic_by_uid($_SESSION['uid']);
+    $data['resume_id'] = $resumeInfo['id'];
+    $data['company_id'] = $_POST['cid'];
+    $rst = https_request_api('/enroll/add', $data);
+    exit($rst['msg']);
+} elseif($act == 'uplode_img') {
+    $img = isset($_POST['img'])? $_POST['img'] : '';  
+    // 获取图片  
+    list($type, $data) = explode(',', $img);  
+
+    // 判断类型  
+    if(strstr($type,'image/jpeg')!==''){  
+        $ext = '.jpg';  
+    }elseif(strstr($type,'image/gif')!==''){  
+        $ext = '.gif';  
+    }elseif(strstr($type,'image/png')!==''){  
+        $ext = '.png';  
+    }  
+    // 生成的文件名  
+    $photo = time().$ext;  
+    // 生成文件  
+    file_put_contents(QISHI_ROOT_PATH.'upload/'.$photo, base64_decode($data), true);  
+    // 返回  
+    echo 'http://www.yjob.net/upload/'.$photo;
+    
 }

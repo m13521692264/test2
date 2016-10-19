@@ -11,8 +11,6 @@
 <title>工作卡</title>
 <link rel="stylesheet" href="{#$QISHI.site_template#}css/manage/css/common.css">
 <link rel="stylesheet" href="{#$QISHI.site_template#}css/manage/css/user.css">
-
-
 </head>
 <body>
 <div class="layout">
@@ -132,89 +130,31 @@
 		
 		<div class="body" style="display: none;">
 			<em></em>
-			<div class="img" onClick="openDiv('card_dialog_2'); openDiv('mask');    return false;">
-				<h2>工作续约</h2>
-				<h4>07:52:04</h4>				
+			<div class="img" {#if !$isxy#} onClick="reenroll({#$ptInfo.job_id#},{#$ptInfo.id#}, {#$companyId#})"{#/if#}>
+				<h2>{#if !$isxy#}工作续约{#else#}已续约{#/if#}</h2>
+				<h4 class="ui-current-time-show"></h4>
 			</div>
 			<div class="txt">
-				<span><i class="n1"></i>您将<a href="img.html" class="addr">续约“7月2日”的工作</a></span>
+                                <p><i></i><span class="ui-current-address1">您将续约“{#$xxDate|date_format:"%m月%d"日#}”的工作</span></p>
 			</div>			
 			<div class="card_list">
 			<div class="hd">
-				签到状态：
+				续约状态：
 			</div>
 			<div class="bd">
 						<!--table-->
 			      <table width="100%" border="0" cellspacing="0" cellpadding="0">
-					  <tr>
-					    <td width="19%">7月1日</td>
-					    <td width="19%">07:52</td>
-					    <td width="45%"><a href="img.html" class="addr"><a href="img.html" class="addr">续约“7月2日”的工作</a></a></td>
-					    <td width="17%" align="right" class="yes">已确认</td>
-					  </tr>
-					  <tr>
-					    <td>7月1日</td>
-					    <td>07:52</td>
-					   <td><a href="img.html" class="addr">续约“7月2日”的工作</a></td>
-					    <td align="right" class="no">已拒绝</td>
-					  </tr>
-					  <tr>
-					    <td>7月1日</td>
-					    <td>07:52</td>
-					    <td><a href="img.html" class="addr">续约“7月2日”的工作</a></td>
-					    <td align="right" class="no">已拒绝</td>
-					  </tr>
-					  <tr>
-					    <td>7月1日</td>
-					    <td>07:52</td>
-					    <td><a href="img.html" class="addr">续约“7月2日”的工作</a></td>
-					    <td align="right" class="yes">已确认</td>
-					  </tr>
-					  <tr>
-					    <td align="left" valign="middle">7月1日</td>
-					    <td align="left" valign="middle">12:10</td>
-					    <td><a href="img.html" class="addr">续约“7月2日”的工作</a></td>
-					    <td align="right" class="wait">待确认</td>
-					  </tr>
-					  <tr>
-					    <td align="left" valign="middle">7月1日</td>
-					    <td align="left" valign="middle">11:50</td>
-					    <td><a href="img.html" class="addr">续约“7月2日”的工作</a></td>
-					    <td align="right" class="no">已拒绝</td>
-					  </tr>
-					  <tr>
-					    <td align="left" valign="middle">7月1日</td>
-					    <td align="left" valign="middle">09:00</td>
-					    <td><a href="img.html" class="addr">续约“7月2日”的工作</a></td>
-					    <td align="right" class="no">已拒绝</td>
-					  </tr>
-					  <tr>
-					    <td align="left" valign="middle">7月1日</td>
-					    <td align="left" valign="middle">10:20</td>
-					    <td><a href="img.html" class="addr">续约“7月2日”的工作</a></td>
-					    <td align="right" class="yes">已确认</td>
-					  </tr>
-					  <tr>
-					    <td align="left" valign="middle">7月1日</td>
-					    <td align="left" valign="middle">08:50</td>
-					    <td><a href="img.html" class="addr">续约“7月2日”的工作</a></td>
-					    <td align="right" class="wait">待确认</td>
-					  </tr>
-					  <tr>
-					    <td align="left" valign="middle">7月1日</td>
-					    <td align="left" valign="middle">10:30</td>
-					    <td><a href="img.html" class="addr">续约“7月2日”的工作</a></td>
-					    <td align="right" class="no">已拒绝</td>
-					  </tr>
-					  <tr class="last">
-					    <td align="left" valign="middle">7月1日</td>
-					    <td align="left" valign="middle">12:40</td>
-					    <td><a href="img.html" class="addr">续约“7月2日”的工作</a></td>
-					    <td align="right" class="no">已拒绝</td>
-					  </tr>
-					</table>
-				  </div>
-			    </div>	
+                                  {#foreach from=$workList item=work #}
+                                    <tr>
+                                        <td width="19%">{#$work.create_time|date_format:"%m月%d"日#}</td>
+                                        <td width="19%">{#$work.create_time|date_format:"%H:%I"日#}</td>
+                                        <td width="45%"><a href="img.html" class="addr"><a href="img.html" class="addr">续约“{#$work.work_date|date_format:"%m月%d"日#}”的工作</a></a></td>
+                                        <td width="17%" align="right" class="{#if $work.status == 200#}yes{#elseif $work.status == 100#}wait{#elseif $work.status == 400#}no{#/if#}">{#if $work.status == 200#}已确认{#elseif $work.status == 100#}待确认{#elseif $work.status == 400#}已拒绝{#else#}已完成{#/if#}</td>
+                                    </tr>
+                                  {#/foreach#}
+                            </table>
+                        </div>
+                    </div>	
 		</div> <!-- body 结束-->
 
 	</div>
@@ -252,16 +192,9 @@
                                     </div>
                                     <div class="imgs">
                                         <textarea name="signDesc" id="signDesc" rows="" cols="" placeholder="请填写签到备注（选填）"></textarea>
-                                        <dl>
-                                            <div class="imglist">
-                                                <dd class="img">
-                                                    <img src="layout/manage/imgs/img_wz1.jpg"/>
-                                                    <i></i>
-                                                </dd>
-                                            </div>
-                                            
+                                       <dl class="ui-upload-img">
                                             <dd class="file">
-                                                    <input type="file" name="signPic" id="signPic" value="" />
+                                                <input type="file" name="" onchange="uploadImg(this)" value="" />
                                             </dd>
                                         </dl>
                                     </div>
@@ -300,23 +233,11 @@
 					</div>
 					<div class="imgs">
 						<textarea id="signOutDesc" name="" rows="" cols="" placeholder="请填写签到备注（选填）"></textarea>
-						<dl>
-							<dd class="img">
-								<img src="../layout/manage/imgs/img_wz1.jpg"/>
-								<i></i>
-							</dd>
-							<dd class="img">
-								<img src="../layout/manage/imgs/img_wz2.jpg"/>
-								<i></i>
-							</dd>
-							<dd class="img">
-								<img src="../layout/manage/imgs/img_wz3.jpg"/>
-								<i></i>
-							</dd>
-							<dd class="file">
-								<input type="file" name="" id="" value="" />
-							</dd>
-						</dl>
+                                        <dl class="ui-upload-img">
+                                            <dd class="file">
+                                                <input type="file" name="" onchange="uploadImg(this)" value="" />
+                                            </dd>
+                                        </dl>
 					</div>
 				</li>
 			</ul>
@@ -335,19 +256,17 @@
 		<div class="body">
 			<ul>
 				<li class="frist">
-					<div class="label">
-						签退时间
-					</div>
-					<div class="input">
-						07:52:04
-					</div>
+                                    <div class="label">
+                                            签退时间
+                                    </div>
+                                    <div class="input ui-current-time-static" id="signOutTime">
+                                    </div>
 				</li>
 				<li class="second">
 					<div class="label">
 						签退地点
 					</div>
-					<div class="input">
-						海淀区中关村街道科学院南路知春公园xxxx海淀区中关村街道科学院南路知春公园xxxx
+					<div class="input ui-current-address" id="signOutAddr">
 					</div>
 				</li>
 				<li class="last">

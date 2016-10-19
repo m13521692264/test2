@@ -15,11 +15,13 @@
 <link rel="stylesheet" href="http://static.yjob.net/layout/blue/css/common.css">
 <link href="./css/common.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="./css/common.css">
+<link rel="stylesheet" href="./js/kalendae/kalendae.css">
 <link rel="stylesheet" href="http://static.yjob.net/layout/blue/css/style.css">
 <link rel="stylesheet" href="http://static.yjob.net/layout/blue/css/wallet.css">
 <script type="text/javascript" src="./js/jquery-1.11.3.js" ></script>
 	<script type='text/javascript' src="./js/jquery.common.js" ></script>
 	<script type="text/javascript" src="./js/layer/layer.js" ></script>
+        	<script type="text/javascript" src="./js/kalendae/kalendae.standalone.min.js" ></script>
 <script language="javascript" src="http://static.ydbimg.com/API/YdbOnline.js"></script>
 <script type="text/javascript">
 var YDB = new YDBOBJ();
@@ -37,57 +39,57 @@ var YDB = new YDBOBJ();
 				$(".menu_bg_layer").css({ width: $(document).width(), position: "absolute",left:"0", top:"0","z-index":"1","background-color":"#000000"});
 				$(".menu_bg_layer").css("opacity",0.3);
 			}
-			// 申请职位
-			$("#jobs_apply").click(function(){
-				var uid="{#$smarty.session.uid#}";
-				var username="{#$smarty.session.username#}";
-				var utype="{#$smarty.session.utype#}";
-				var id={#$smarty.get.id#};
-				if(uid=='' || username=='' || utype=='1')
-				{
-					window.location.href='login.php';
-					return false;
-				}
-				showFloatBox();
-				$(".choose_menu").css({ top: ($(window).height() - $('.choose_menu').outerHeight())/2 + $(document).scrollTop() });
-				$(".choose_menu").show();
-				var jobs_id = {#$show.id#};
-				var jobs_name = "{#$show.job_name#}";
-				var company_id = {#$show.company_id#};
-				var company_name = "{#$show.company_name#}";
-                                var job_info_id = $("#position_id").val();
-				$("#but_left").click(function(){
-					var resume_id=$("input[name='resume_list']:checked").val();
-					var resume_title=$("input[name='resume_list']:checked").attr("title");
-					if(resume_id){
-						$(".choose_menu").hide();
-						$(".menu_bg_layer").remove();
-						$.post("personal/apply.php?act=apply_add",{job_id:jobs_id,jobs_name:jobs_name,company_id:company_id,company_name:company_name,resume_id:resume_id,resume_title:resume_title,job_info_id:job_info_id},function(data){
-							if(data=="ok"){
-								//layer.msg('申请职位成功！', {icon: 1});
-								$("#bm").show();
-		                        setTimeout(function () {
-		                            window.location.reload();
-		                        }, 2000);
-							}else if(data=="err"){
-								layer.msg('申请职位失败！', {icon: 2});
-							}else{
-								$("#ybm").show();
-								$("#ybm h4").html(data);
-//								setTimeout(function () {
+//			// 申请职位
+//			$("#jobs_apply").click(function(){
+//				var uid="{#$smarty.session.uid#}";
+//				var username="{#$smarty.session.username#}";
+//				var utype="{#$smarty.session.utype#}";
+//				var id={#$smarty.get.id#};
+//				if(uid=='' || username=='' || utype=='1')
+//				{
+//					window.location.href='login.php';
+//					return false;
+//				}
+//				showFloatBox();
+//				$(".choose_menu").css({ top: ($(window).height() - $('.choose_menu').outerHeight())/2 + $(document).scrollTop() });
+//				$(".choose_menu").show();
+//				var jobs_id = {#$show.id#};
+//				var jobs_name = "{#$show.job_name#}";
+//				var company_id = {#$show.company_id#};
+//				var company_name = "{#$show.company_name#}";
+//                                var job_info_id = $("#position_id").val();
+//				$("#but_left").click(function(){
+//					var resume_id=$("input[name='resume_list']:checked").val();
+//					var resume_title=$("input[name='resume_list']:checked").attr("title");
+//					if(resume_id){
+//						$(".choose_menu").hide();
+//						$(".menu_bg_layer").remove();
+//						$.post("personal/apply.php?act=apply_add",{job_id:jobs_id,jobs_name:jobs_name,company_id:company_id,company_name:company_name,resume_id:resume_id,resume_title:resume_title,job_info_id:job_info_id},function(data){
+//							if(data=="ok"){
+//								//layer.msg('申请职位成功！', {icon: 1});
+//								$("#bm").show();
+//		                        setTimeout(function () {
 //		                            window.location.reload();
 //		                        }, 2000);
-							}
-						});
-					}else{
-						layer.msg("请选择简历");
-					}
-				});
-				$("#but_right").click(function(){
-					$(".choose_menu").hide();
-					$(".menu_bg_layer").remove();
-				})
-			});
+//							}else if(data=="err"){
+//								layer.msg('申请职位失败！', {icon: 2});
+//							}else{
+//								$("#ybm").show();
+//								$("#ybm h4").html(data);
+////								setTimeout(function () {
+////		                            window.location.reload();
+////		                        }, 2000);
+//							}
+//						});
+//					}else{
+//						layer.msg("请选择简历");
+//					}
+//				});
+//				$("#but_right").click(function(){
+//					$(".choose_menu").hide();
+//					$(".menu_bg_layer").remove();
+//				})
+//			});
 			// 收藏职位
 			$("#collect_job").click(function(){
 				var id = {#$smarty.get.id#};
@@ -162,6 +164,7 @@ var YDB = new YDBOBJ();
 			{#/if#}
 			<h4>已报<span>{#$show.counts#}</span>名</h4>
 		</div>
+            <input type="hidden" value="{#$rid#}" id="rid"/>
 	</div>
 	
 	<div class="job_body">
@@ -265,7 +268,7 @@ var YDB = new YDBOBJ();
                     {#if $show.is_enroll == 1#}
                         <span style="color:#fff;">已报名</span>
                     {#else#}
-                        <a href="javascript:;" class="next_button" id="jobs_apply" >立即报名</a>
+                        	<h4><a href="#"  class="next_button" id="jobs_apply" onClick="openDiv('job_mask',99999); openDiv('data_time',9999999); return false"  >立即报名</a></h4>
                     {#/if#}
 		</div>
 	</div>
@@ -274,7 +277,7 @@ var YDB = new YDBOBJ();
 
 
 <!-- 弹出框 -->
-	<div class="menu choose_menu" style="position:absolute;z-index:1;">
+<!--	<div class="menu choose_menu" style="position:absolute;z-index:1;">
 		<div class="menu_title">请确认报名</div>
 		<ul style="display:none;">
 			{#foreach from=$resume_list item=list#}
@@ -290,7 +293,7 @@ var YDB = new YDBOBJ();
 			</div>
 			<div class="clear"></div>
 		</div>
-	</div> 
+	</div>-->
 
 <!--弹窗-->
 <div class="job_mask" id="job_mask">
@@ -383,133 +386,6 @@ var YDB = new YDBOBJ();
 		</div>
 	    <h4></h4>
 	</div>
-	
-	<!--选择日期-->
-		<!--<div class="masks" id="masks"  onClick="closeDiv('data_time'); closeDiv('masks');    return false;"/ >
-		
-	</div>
-	<div class="data_time" id="data_time">
-		<div class="head">
-			<div class="l"   onClick="closeDiv('data_time'); closeDiv('masks');    return false;"/  >
-				取消
-			</div>
-			<div class="c">
-				选择工作日期
-			</div>
-			<div class="r">
-				确定
-			</div>
-		</div>
-		
-		<div class="data_list">
-			<div class="prve">
-				
-			</div>
-			
-			<div class="next">
-				
-		    </div>
-			<ul>
-				<li>
-					<div class="hd">
-						2016年08月
-					</div>
-					<div class="bd">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td>一</td>
-    <td>二</td>
-    <td>三</td>
-    <td>四</td>
-    <td>五</td>
-    <td>六</td>
-    <td>日</td>
-  </tr>
-  <tr>
-      <td></td>
-      <td><input name="" type="checkbox" value="" /><label >15</label></td>
-      <td><input name="" type="checkbox" value="" /><label >16</label></td>
-      <td><input name="" type="checkbox" value="" /><label >17</label></td>
-      <td><input name="" type="checkbox" value="" /><label >18</label></td>
-      <td><input name="" type="checkbox" value="" /><label >19</label></td>
-      <td><input name="" type="checkbox" value="" /><label >20</label></td>
-  </tr>
-  <tr>
-     <td><input name="" type="checkbox" value="" /><label> 21</label></td>
-     <td><input name="" type="checkbox" value="" /><label >22</label></td>
-     <td><input name="" type="checkbox" value="" /><label >23</label></td>
-     <td><input name="" type="checkbox" value="" /><label >24</label></td>
-     <td><input name="" type="checkbox" value="" /><label >25</label></td>
-     <td><input name="" type="checkbox" value="" /><label >26</label></td>
-     <td><input name="" type="checkbox" value="" /><label >27</label></td>
-  </tr>
-  <tr>
-      <td><input name="" type="checkbox" value="" /><label >28</label></td>
-      <td><input name="" type="checkbox" value="" /><label >29</label></td>
-      <td><input name="" type="checkbox" value="" /><label >30</label></td>
-      <td><input name="" type="checkbox" value="" /><label >31</label></td>
-      <td></td>
-      <td></td>
-      <td></td>
-  </tr>
-</table>
-
-		</div>		
-				</li>
-				<li>
-					<div class="hd">
-						2016年09月
-					</div>
-					<div class="bd">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td>一</td>
-    <td>二</td>
-    <td>三</td>
-    <td>四</td>
-    <td>五</td>
-    <td>六</td>
-    <td>日</td>
-  </tr>
-  <tr>
-      <td></td>
-      <td><input name="" type="checkbox" value="" /><label >15</label></td>
-      <td><input name="" type="checkbox" value="" /><label >16</label></td>
-      <td><input name="" type="checkbox" value="" /><label >17</label></td>
-      <td><input name="" type="checkbox" value="" /><label >18</label></td>
-      <td><input name="" type="checkbox" value="" /><label >19</label></td>
-      <td><input name="" type="checkbox" value="" /><label >20</label></td>
-  </tr>
-  <tr>
-     <td><input name="" type="checkbox" value="" /><label> 21</label></td>
-     <td><input name="" type="checkbox" value="" /><label >22</label></td>
-     <td><input name="" type="checkbox" value="" /><label >23</label></td>
-     <td><input name="" type="checkbox" value="" /><label >24</label></td>
-     <td><input name="" type="checkbox" value="" /><label >25</label></td>
-     <td><input name="" type="checkbox" value="" /><label >26</label></td>
-     <td><input name="" type="checkbox" value="" /><label >27</label></td>
-  </tr>
-  <tr>
-      <td><input name="" type="checkbox" value="" /><label >28</label></td>
-      <td><input name="" type="checkbox" value="" /><label >29</label></td>
-      <td><input name="" type="checkbox" value="" /><label >30</label></td>
-      <td><input name="" type="checkbox" value="" /><label >31</label></td>
-      <td></td>
-      <td></td>
-      <td></td>
-  </tr>
-</table>
-
-		</div>		
-				</li>
-			</ul>
-			
-
-	    </div>
-	</div>-->
-	
-	<!--日期结束-->
-	
 </form>  
 
 <!--在外层新加了 form 表单-->
@@ -524,7 +400,121 @@ var YDB = new YDBOBJ();
 var YDB = new YDBOBJ();
     YDB.SetMenuBar(0);
 </script>
+	<!--选择日期-->
+    
+	
 
+	<!--选择日期-->
+    
+	
+    <style>
+	#data_time{position:fixed; width:750px; left:50%; margin-left:-375px; bottom:0; display:none; z-index:999;}
+	.date_time_title{ height:80px; background:#f5f5f5; border-bottom:#c8c8c8 solid 1px; line-height:80px; font-size:24px; padding:0 30px; text-align:center;}
+	.date_time_title .cancel{ position:absolute; left:30px; top:0;}
+	.date_time_title .submit{ position:absolute; right:30px; top:0;}
+	
+	.kalendae .k-days span.k-out-of-month{ opacity:0; }
+	.kalendae .k-days span.k-active{ color:#ddd;}
+	.kalendae .k-days span.k-selected{ color:#none;}
+	.kalendae .k-days span[data-date='2016-08-15'],
+	.kalendae .k-days span[data-date='2016-09-2'],
+	.kalendae .k-days span[data-date='2016-09-12'],
+	.kalendae .k-days span[data-date='2016-09-22'],
+	.kalendae .k-days span[data-date='2016-09-14'],
+	.kalendae .k-days span[data-date='2016-09-16']{ color:#333;}
+	</style>
+	<div class="data_time" id="data_time">  
+    	<div class="date_time_title">
+        	<div class="cancel" onClick="closeDiv('data_time');closeDiv('job_mask');">取消</div>
+            <div class="submit">确定</div>
+            <h2>选择工作日期</h2>
+        </div>
+        <div class="date_time_container" id="date_time_container">
+        
+        </div>
+	</div>
+    <script type="text/javascript" charset="utf-8">
+		var k = new Kalendae('date_time_container', {
+			months:1,
+			mode:'multiple'
+			//,selected:[Kalendae.moment().subtract({M:1}), Kalendae.moment().add({M:1})]  
+		});
+		
+		
+		/*k.subscribe('change', function (date) {
+		   console.log(date, this.getSelected());
+		});*/
+		
+		//k.getSelected();
+		
+		
+		
+		
+		
+		
+		$(function(){
+		
+		$('#data_time .submit').click(function(){
+                        var uid="{#$smarty.session.uid#}";
+                        var username="{#$smarty.session.username#}";
+                        var utype="{#$smarty.session.utype#}";
+                        var id={#$smarty.get.id#};
+                        if(uid=='' || username=='' || utype=='1')
+                        {
+                                window.location.href='login.php';
+                                return false;
+                        }
+                        //showFloatBox();
+                        $(".choose_menu").css({ top: ($(window).height() - $('.choose_menu').outerHeight())/2 + $(document).scrollTop() });
+                        var jobs_id = {#$show.id#};
+                        var jobs_name = "{#$show.job_name#}";
+                        var company_id = {#$show.company_id#};
+                        var company_name = "{#$show.company_name#}";
+                        var job_info_id = $("#position_id").val();
+                        var resume_id=$("#rid").val();
+                                $.post("personal/apply.php?act=apply_add",{job_id:jobs_id,jobs_name:jobs_name,company_id:company_id,company_name:company_name,resume_id:resume_id,job_info_id:job_info_id, work_date:k.getSelected()},function(data){
+                                if(data=="ok"){
+                                    //layer.msg('申请职位成功！', {icon: 1});
+                                    $("#bm").show();
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    }, 2000);
+                                    }else if(data=="err"){
+                                            layer.msg('申请职位失败！', {icon: 2});
+                                    }else{
+                                            $("#ybm").show();
+                                            $("#ybm h4").html(data);
+                                    }
+                                });
+                        
+                        $("#but_right").click(function(){
+                                $(".choose_menu").hide();
+                                $(".menu_bg_layer").remove();
+                        })
+		})
+			
+			/*setTimeout(function(){
+				$('.k-days span').each(function(){
+					if($(this).data('date')=='2016-08-15'){
+						$(this).addClass('k-disabled');
+					}
+				})
+			},200)*/
+			
+			$('.k-days').bind('DOMNodeInserted', function(e) {
+				
+				/*setTimeout(function(){
+					$('.k-days span').each(function(){
+					if($(this).data('date')=='2016-09-12'){
+							$(this).addClass('k-disabled');
+						}
+					})
+				},200)*/
+				
+				//alert('element now contains: ' + $(e.target).html());
+			}); 
+		})
+	</script>
 <div id="page_description" style="display:none;">{#$show.contents#}</div>
 <script type="text/javascript" src="http://static.yjob.net/layout/blue/js/jquery-1.7.2.js"></script>
 <script type="text/javascript" src="http://static.yjob.net/layout/blue/js/jquery.glide.js"></script>

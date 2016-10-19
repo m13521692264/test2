@@ -244,6 +244,16 @@ $(function(){
 		
 	})
         
+        $('#show_type').change(function(){
+		var obj = $(this);
+		var v = $(this).val();
+                var url = obj.data('url')+'&show_type='+v;
+                window.location.href = url;
+		
+	})
+        
+        
+        
 	
 	//签到状态
 	$('.sign_mgr .body dd').each(function(){
@@ -486,16 +496,28 @@ $(function(){
 
 $(function(){
     $('#signIn').on("click", function () {
-        $.post("personal_ajax.php", {"act":"sign","signTime":$("#signInTime").html(),"signAddr":$("#signInAddr").html(),"signDesc":$("#signDesc").val(),"jobInfoId":$("#job_info_id").val(),"jobId":$("#job_id").val(),"type":$(this).attr('data-type'),"enrollId":$("#enroll_id").val()},
+        var pics = [];
+        $('input[name="pics"]').each(function(){
+		var obj = $(this);
+                pics.push(obj.val());
+
+	})
+        $.post("personal_ajax.php", {"act":"sign","signTime":$("#signInTime").html(),"signAddr":$("#signInAddr").html(),"signDesc":$("#signDesc").val(),"jobInfoId":$("#job_info_id").val(),"jobId":$("#job_id").val(),"type":$(this).attr('data-type'),"enrollId":$("#enroll_id").val(), "pics":pics},
 		function (data,textStatus)
 		 {
                      alert(data);
-                     location.reload();
+                     //location.reload();
 		 }
 	);
 	});
         $('#signOut').on("click", function () {
-        $.post("personal_ajax.php", {"act":"sign","signTime":$("#signOutTime").html(),"signAddr":$("#signOutAddr").html(),"signDesc":$("#signOutDesc").val(),"jobInfoId":$("#job_info_id").val(),"jobId":$("#job_id").val(),"type":$(this).attr('data-type'),"enrollId":$("#enroll_id").val()},
+        var pics = [];
+        $('input[name="pics"]').each(function(){
+		var obj = $(this);
+                pics.push(obj.val());
+
+	})
+        $.post("personal_ajax.php", {"act":"sign","signTime":$("#signOutTime").html(),"signAddr":$("#signOutAddr").html(),"signDesc":$("#signOutDesc").val(),"jobInfoId":$("#job_info_id").val(),"jobId":$("#job_id").val(),"type":$(this).attr('data-type'),"enrollId":$("#enroll_id").val(), "pics":pics},
 		function (data,textStatus)
 		 {
                      alert(data);
@@ -592,6 +614,17 @@ function showCurrent(ele) {
 	ele.html(_now.getHours() + ":" + _now.getMinutes() +":" + _now.getSeconds());
 }
 
+
+function reenroll(jobid, jobinfo_id, cid) {
+    $.post("personal_ajax.php", {"act":"re_enroll","jobid":jobid, "jobinfo_id":jobinfo_id, "cid":cid},
+        function (textStatus)
+         {
+            alert('续约成功');
+            location.reload();
+         }
+    );
+}
+
 function showLocalAddress(ele) {
 	$.ajax({
 		url: "http://api.map.baidu.com/highacciploc/v1?qterm=pc&ak=1wvtkXp4ETKwIy3Byu2Ou3cOYBGuqdYL&coord=bd09ll&callback_type=jsonp",
@@ -612,4 +645,69 @@ function showLocalAddress(ele) {
 	});
 }
 
+function uploadImg(file) {
+	if(!file.files || !file.files[0])
+		return;
+	if($(".ui-upload-img").children(".img").length >= 4){
+		alert("最多可传四张！");
+		return;
+	}
+	var reader = new FileReader();
+	reader.onload = function(evt){
+            if(evt.target.result.match(/image/)){
+                 $.post("personal_ajax.php", {"act":"uplode_img","img":evt.target.result},
+                    function(ret){  
+                         if(ret!=''){  
+                             var file_ele = $('<dd class="img">'
+                            +'<img src="'+ret+'"/>'
+                            +'<i class="remove"></i>'
+                            +'<input type="hidden" value="'+ret + '" name=pics />'
+                            + '</dd>');
+                            $(".ui-upload-img").children(".file").before(file_ele);
+                            file_ele.find(".remove").on("click",function () {
+                                    $(this).parent().fadeOut(function(){
+                                            $(this).remove();
+                                    });
+                            });
+                             $('#showimg').html('<img src="' + ret + '">');  
+                         }else{
+                             alert('upload fail');  
+                         }  
+                     }); 
+                    
+            }
+            else
+                alert("请上传正确格式的图片！")
+	}
+	reader.readAsDataURL(file.files[0]);
+}
 
+
+$(function(){
+	$('.data_time table').each(function(){
+		
+		var a = $(this).index();
+		
+		
+		$(this).find('tr').each(function(){
+			var b = $(this).index();	
+			
+			
+			$(this).find('td').each(function(){
+					
+				var c = $(this).index();
+				
+				var input = $(this).find('input[type=checkbox]');
+				var label = $(this).find('label');
+				var i = 'i_'+ a +'_'+ b +'_' + c;
+				input.attr('id', i);
+				label.attr('for', i);							 
+			})
+			
+		})
+		
+		
+		
+		
+	})		   
+})

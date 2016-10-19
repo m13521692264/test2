@@ -53,9 +53,9 @@
                                             查看方式
                                     </div>
                                     <div class="input">
-                                        <select name="" id="show_type" data-url="http://www.baidu.com/">
-                                            <option value="link">全部</option>
-                                            <option value="link">图片</option>
+                                        <select name="" id="show_type" data-url="/m/personal/user.php?act=signIn_manage&id={#$ptInfo.id#}&work_date={#$workdate#}">
+                                            <option value="0">全部</option>
+                                            <option {#if $show_type#}selected{#/if#} value="1">图片</option>
                                         </select>						
                                     </div>
 				</li>
@@ -76,7 +76,7 @@
 						选择日期
 					</div>
 					<div class="input" >						
-                                            <select id="work_date" data-url="/m/personal/user.php?act=signIn_manage&id={#$ptInfo.id#}"">
+                                            <select id="work_date" data-url="/m/personal/user.php?act=signIn_manage&id={#$ptInfo.id#}&show_type={#$show_type#}">
                                                 <option value="0" >全部</option>
                                                 {#foreach from=$ptInfo.work_date item=work_date#}
                                                     <option value="{#$work_date#}" {#if $cdate == $work_date#}selected{#/if#}>{#$work_date|date_format:"%m月%d日"#}</option>
@@ -88,7 +88,10 @@
 		</div>
 		</form>
 	</div>
-	<div class="sign_mgr sign_mgr_d">
+        {#if $show_type == 1#}
+        
+        {#else#}
+        <div class="sign_mgr sign_mgr_d">
 		<form>
 		<div class="head">
 			<h2><i></i>签到状态</h2>
@@ -174,6 +177,8 @@
 			</ul>
 		</div>
 	</div>
+        {#/if#}
+	
 	</form>
 </div>
 <script type="text/javascript" src="{#$QISHI.site_template#}js/manage/js/jquery-1.7.2.js"></script>

@@ -56,7 +56,7 @@ $(function(){
 		$('.mypie').circliful();
 	}
 	
-	/*���ǩ��*/
+	/*���ǩ��?*/
 	$('.card_dialog .img i').click(function(){
 		$(this).parent().fadeOut(function(){
 			$(this).remove();
@@ -127,7 +127,7 @@ $(function(){
 			if($(this).hasClass('selected')){
 				$(this).removeClass('selected');
 				obj.find('.ico h4').html('ȡ����');
-				obj.find('.txt h5').html('�����Ϊ�Ÿ���');
+				obj.find('.txt h5').html('�����Ϊ�Ÿ���?');
 			}
 			else{
 				$(this).addClass('selected');
@@ -146,7 +146,7 @@ $(function(){
 			if($(this).hasClass('selected')){
 				$(this).removeClass('selected');
 				obj.find('.ico h4').html('ȡ����');
-				obj.find('.txt h5').html('�����Ϊ����');
+				obj.find('.txt h5').html('�����Ϊ����?');
 			}
 			else{
 				$(this).addClass('selected');
@@ -253,7 +253,7 @@ $(function(){
 			
 		}
 	})
-	//ǩ�����?��
+	//ǩ�����??��
 	$('.sign_info .body .tels').change(function(){
 		var v = $(this).val();
 		$('.sign_info .body .tele').attr('href', 'tel:'+v);
@@ -354,23 +354,23 @@ $(function(){
 		setTimeout(function(){
 		var glide = $('.pic_view').glide({
 
-			//autoplay:true,//�Ƿ��Զ����� Ĭ��ֵ true�����Ҫ�����ô�ֵ
+			//autoplay:true,//�Ƿ��Զ����� Ĭ��ֵ true�����Ҫ�����ô��?
 
 			animationTime:500, //�������Ч��ֻ�е������֧��CSS3��ʱ����Ч
 
 			arrows:false, //�Ƿ���ʾ���ҵ�����
 			//arrowsWrapperClass: "arrowsWrapper",//�����ͷ�������ⲿDIV����
-			//arrowMainClass: "slider-arrow",//�����ͷ��������
+			//arrowMainClass: "slider-arrow",//�����ͷ��������?
 			//arrowRightClass:"slider-arrow--right",//�����Ҽ�ͷ����
-			//arrowLeftClass:"slider-arrow--left",//�������ͷ����
-			arrowRightText:"",//�������ҵ��������ֻ��߷��Ҳ��������
+			//arrowLeftClass:"slider-arrow--left",//�������ͷ����?
+			arrowRightText:"",//�������ҵ��������ֻ��߷��Ҳ��������?
 			arrowLeftText:"",
 
 			nav:false, //��������Ҳ���Ǳ�������ʾ��С����
-			navCenter:true, //��������λ���Ƿ����
+			navCenter:true, //��������λ���Ƿ����?
 			navClass:"slider-nav",//���������ⲿdiv����
-			navItemClass:"slider-nav__item", //������С�������ʽ
-			navCurrentItemClass:"slider-nav__item--current" //��ѡ�к����ʽ
+			navItemClass:"slider-nav__item", //������С��������?
+			navCurrentItemClass:"slider-nav__item--current" //��ѡ�к�����?
 		});
 		},10)
 	}
@@ -396,9 +396,6 @@ $(function(){
 		history.back();
 	})
 })
-
-
-
 
 //�򿪵���
 function openDiv(id){

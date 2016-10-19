@@ -121,12 +121,14 @@ if($row['list']) {
 //是否收藏
 $favData['job_id'] = $_GET['id'];
 $favData['uid'] = $_SESSION['uid'];
+$resumeInfo = get_resume_basic_by_uids($_SESSION['uid']);
 $isFavRst = https_request_api('job/isFav', $favData);
 $row['is_fav'] = !$isFavRst['codes'] ? $isFavRst['data'] : 0;
 //是否报名
 $isEnrollRst = https_request_api('enroll/isEnroll', $favData);
 $row['is_enroll'] = !$isEnrollRst['codes'] ? $isEnrollRst['data'] : 0;
 $smarty->assign('is_show_tel',$show);
+$smarty->assign('rid',$resumeInfo['id']);
 $smarty->assign('show',$row);
 $smarty->assign('interest_show',$interest_show);
 $smarty->assign('goback',$_SERVER["HTTP_REFERER"]);
