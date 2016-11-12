@@ -9,6 +9,7 @@
  * 使用；不允许对程序代码以任何形式任何目的的再发布。
  * ============================================================================
 */
+
 if(!defined('IN_QISHI')) exit('Access Denied!');
 require_once(QISHI_ROOT_PATH.'include/help.class.php');
 class mysql {

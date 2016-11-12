@@ -329,6 +329,7 @@ elseif ($act=="loginform")
 		{
 			$contents=str_replace('{#$qq_apiopen#}','',$contents);
 		}
+
 		if($_CFG['sina_apiopen']==1)
 		{
 			$contents=str_replace('{#$sina_apiopen#}','<a href="'.$_CFG['site_dir'].'user/connect_sina.php" class="third-icon sina f-left"></a>',$contents);

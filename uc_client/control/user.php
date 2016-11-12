@@ -8,7 +8,6 @@
 */
 
 !defined('IN_UC') && exit('Access Denied');
-
 define('UC_USER_CHECK_USERNAME_FAILED', -1);
 define('UC_USER_USERNAME_BADWORD', -2);
 define('UC_USER_USERNAME_EXISTS', -3);

@@ -26,6 +26,7 @@ function get_all_district_marked_subsite(){
 	}
 	return $data;
 }
+
 function showmsg($msg_detail, $msg_type = 0, $links = array(), $auto_redirect = true,$seconds=3)
 {
 	global $smarty;
@@ -1023,7 +1024,7 @@ function https_request_api($apiPath, $data = null) {
         curl_setopt($curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
         if (!empty($data)){
             $data = json_encode(array_convert_encoding($data));
-              curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+              curl_setopt($curl, CURLOPT_HTTPHEADER, array(
                 'Accept:?application/json',
                 'Content-Type:?application/json',
                 'Content-Length: ' . strlen($data)
@@ -1492,4 +1493,8 @@ function sms_check_token()
 		}
 	unset($_SESSION['token'],$hiddentoken);
 }
+
+
+
+
 ?>

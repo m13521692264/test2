@@ -15,14 +15,14 @@ die('Access Denied!');
 }
 include_once(QISHI_ROOT_PATH.'include/template_lite/class.template.php');
 $smarty = new Template_Lite; 
-$smarty -> cache_dir = QISHI_ROOT_PATH.'temp/caches/'.$_CFG['template_dir'];
-$smarty -> compile_dir =  QISHI_ROOT_PATH.'temp/templates_c/'.$_CFG['template_dir'];
-$smarty -> template_dir = QISHI_ROOT_PATH.'templates/'.$_CFG['template_dir'];
+$smarty -> cache_dir = QISHI_ROOT_PATH.'temp/caches/'.$_CFG['template_dir'];          // 缓存文件目录
+$smarty -> compile_dir =  QISHI_ROOT_PATH.'temp/templates_c/'.$_CFG['template_dir'];  // 编译文件目录
+$smarty -> template_dir = QISHI_ROOT_PATH.'templates/'.$_CFG['template_dir'];     	  // 模板文件目录
 $smarty -> reserved_template_varname = "smarty";
 $smarty -> left_delimiter = "{#";
 $smarty -> right_delimiter = "#}";
 $smarty -> force_compile = false;
 $smarty -> assign('_PLUG', $_PLUG);
 $smarty -> assign('QISHI', $_CFG);
-$smarty -> assign('page_select',$page_select);
+$smarty -> assign('page_select', $page_select);
 ?>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="GBK">
+    <file url="file://$PROJECT_DIR$/adminyyy/admin_ad.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/adminyyy/admin_ajax.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/adminyyy/admin_app.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/adminyyy/admin_article.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/adminyyy/admin_baidu_submiturl.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/adminyyy/admin_baiduxml.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/adminyyy/admin_campus.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/adminyyy/admin_category.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/adminyyy/admin_check_database.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/adminyyy/admin_check_file.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/adminyyy/admin_content_key_link.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/adminyyy/admin_gifts.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/index.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/templates/default/js/area2.js" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/user/company/company_ajax.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/user/company/company_jobs.php" charset="GBK" />
+    <file url="PROJECT" charset="GBK" />
+  </component>
+</project>

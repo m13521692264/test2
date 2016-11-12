@@ -17,6 +17,7 @@ require_once(QISHI_ROOT_PATH.'include/mysql.class.php');
 require_once(QISHI_ROOT_PATH.'include/fun_personal.php');
 require_once(QISHI_ROOT_PATH.'include/fun_weixin.php');
 $db = new mysql($dbhost,$dbuser,$dbpass,$dbname);
+
 if((empty($_SESSION['uid']) || empty($_SESSION['username']) || empty($_SESSION['utype'])) &&  $_COOKIE['QS']['username'] && $_COOKIE['QS']['password'] && $_COOKIE['QS']['uid'])
 {
 	require_once(QISHI_ROOT_PATH.'include/fun_user.php');

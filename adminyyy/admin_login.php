@@ -1,17 +1,19 @@
 <?php
  /*
- * 74cms µÇÂ¼Ò³Ãæ
+ * 74cms ÂµÃ‡Ã‚Â¼Ã’Â³ÃƒÃ¦
  * ============================================================================
- * °æÈ¨ËùÓĞ: ÆïÊ¿ÍøÂç£¬²¢±£ÁôËùÓĞÈ¨Àû¡£
- * ÍøÕ¾µØÖ·: http://www.74cms.com£»
+ * Â°Ã¦ÃˆÂ¨Ã‹Ã¹Ã“Ã: Ã†Ã¯ÃŠÂ¿ÃÃ¸Ã‚Ã§Â£Â¬Â²Â¢Â±Â£ÃÃ´Ã‹Ã¹Ã“ÃÃˆÂ¨Ã€Ã»Â¡Â£
+ * ÃÃ¸Ã•Â¾ÂµÃ˜Ã–Â·: http://www.74cms.comÂ£Â»
  * ----------------------------------------------------------------------------
- * Õâ²»ÊÇÒ»¸ö×ÔÓÉÈí¼ş£¡ÄúÖ»ÄÜÔÚ²»ÓÃÓÚÉÌÒµÄ¿µÄµÄÇ°ÌáÏÂ¶Ô³ÌĞò´úÂë½øĞĞĞŞ¸ÄºÍ
- * Ê¹ÓÃ£»²»ÔÊĞí¶Ô³ÌĞò´úÂëÒÔÈÎºÎĞÎÊ½ÈÎºÎÄ¿µÄµÄÔÙ·¢²¼¡£
+ * Ã•Ã¢Â²Â»ÃŠÃ‡Ã’Â»Â¸Ã¶Ã—Ã”Ã“Ã‰ÃˆÃ­Â¼Ã¾Â£Â¡Ã„ÃºÃ–Â»Ã„ÃœÃ”ÃšÂ²Â»Ã“ÃƒÃ“ÃšÃ‰ÃŒÃ’ÂµÃ„Â¿ÂµÃ„ÂµÃ„Ã‡Â°ÃŒÃ¡ÃÃ‚Â¶Ã”Â³ÃŒÃÃ²Â´ÃºÃ‚Ã«Â½Ã¸ÃÃÃÃÂ¸Ã„ÂºÃ
+ * ÃŠÂ¹Ã“ÃƒÂ£Â»Â²Â»Ã”ÃŠÃÃ­Â¶Ã”Â³ÃŒÃÃ²Â´ÃºÃ‚Ã«Ã’Ã”ÃˆÃÂºÃÃÃÃŠÂ½ÃˆÃÂºÃÃ„Â¿ÂµÃ„ÂµÃ„Ã”Ã™Â·Â¢Â²Â¼Â¡Â£
  * ============================================================================
 */
 define('IN_QISHI', true);
 require_once(dirname(__FILE__).'/../data/config.php');
 require_once(dirname(__FILE__).'/include/admin_common.inc.php');
+// echo QISHI_ROOT_PATH;exit; // é¡¹ç›®æ ¹ç›®å½•
+// echo dirname(__FILE__);exit; // å½“å‰æ–‡ä»¶çš„ç›®å½•
 $act = !empty($_REQUEST['act']) ? trim($_REQUEST['act']) : 'login';
 if($act == 'logout')
 {
@@ -28,6 +30,7 @@ elseif($act == 'login')
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 	header("Cache-Control: no-cache, must-revalidate");
 	header("Pragma: no-cache");
+	$smarty->assign('data','ÃŠÃ½Â¾ÃÃŠÃ‡Ã“ÃƒsmartyÂ½Ã¸ÃÃÂ´Â«ÃŠÃ¤ÂµÃ„!');
 	if(isset($_SESSION['admin_id'],$_SESSION['admin_name'],$_SESSION['admin_purview']))
 	{
 	header("Location: admin_index.php"); 
@@ -50,36 +53,36 @@ elseif($act == 'do_login')
  	$remember = isset($_POST['rememberme']) ? intval($_POST['rememberme']) : 0;
  	if($admin_name == '')
 	{
-	header("Location:?act=login&err=".urlencode('ÓÃ»§Ãû²»ÄÜÎª¿Õ'));
+	header("Location:?act=login&err=".urlencode('Ã“ÃƒÂ»Â§ÃƒÃ»Â²Â»Ã„ÃœÃÂªÂ¿Ã•'));
 	exit();
  	}
  	elseif($admin_pwd == '')
 	{
-	header("Location:?act=login&err=".urlencode('ÃÜÂë²»ÄÜÎª¿Õ'));
+	header("Location:?act=login&err=".urlencode('ÃƒÃœÃ‚Ã«Â²Â»Ã„ÃœÃÂªÂ¿Ã•'));
 	exit();
  	}
 	$captcha=get_cache('captcha');
 	if(empty($postcaptcha) && $captcha['verify_adminlogin']=='1')
 	{
-		header("Location:?act=login&err=".urlencode('ÑéÖ¤Âë²»ÄÜÎª¿Õ'));
+		header("Location:?act=login&err=".urlencode('Ã‘Ã©Ã–Â¤Ã‚Ã«Â²Â»Ã„ÃœÃÂªÂ¿Ã•'));
 		exit();
  	}
 	if ($captcha['verify_adminlogin']=='1' && strcasecmp($_SESSION['imageCaptcha_content'],$postcaptcha)!=0)
 	{
-		write_log("<span style=\"color:#FF0000\">ÑéÖ¤ÂëÌîĞ´´íÎó</span>",$admin_name,2);
-		header("Location:?act=login&err=".urlencode('ÑéÖ¤ÂëÌîĞ´´íÎó'));
+		write_log("<span style=\"color:#FF0000\">Ã‘Ã©Ã–Â¤Ã‚Ã«ÃŒÃ®ÃÂ´Â´Ã­ÃÃ³</span>",$admin_name,2);
+		header("Location:?act=login&err=".urlencode('Ã‘Ã©Ã–Â¤Ã‚Ã«ÃŒÃ®ÃÂ´Â´Ã­ÃÃ³'));
 		exit();
 	}
  	elseif(check_admin($admin_name,$admin_pwd))
 	{
 		$admininfo=get_admin_one($admin_name);
 		if(!in_array($_CFG['subsite_id'],explode(',',$admininfo['site_purview'])) && $admininfo['purview']<>"all"){
-			write_log("<span style=\"color:#FF0000\">ÄúÃ»ÓĞ¹ÜÀíÈ¨ÏŞ</span>",$admin_name,2);
-			header("Location:?act=login&err=".urlencode('Ã»ÓĞ¹ÜÀíÈ¨ÏŞ'));
+			write_log("<span style=\"color:#FF0000\">Ã„ÃºÃƒÂ»Ã“ÃÂ¹ÃœÃ€Ã­ÃˆÂ¨ÃÃ</span>",$admin_name,2);
+			header("Location:?act=login&err=".urlencode('ÃƒÂ»Ã“ÃÂ¹ÃœÃ€Ã­ÃˆÂ¨ÃÃ'));
 			exit();
 		}
  		update_admin_info($admin_name);
-		write_log("³É¹¦µÇÂ¼",$admin_name);
+		write_log("Â³Ã‰Â¹Â¦ÂµÃ‡Ã‚Â¼",$admin_name);
  		if($remember == 1)
 		{
 			$admininfo=get_admin_one($admin_name);
@@ -90,8 +93,8 @@ elseif($act == 'do_login')
  	}
 	else
 	{
-		write_log("<span style=\"color:#FF0000\">ÓÃ»§Ãû»òÃÜÂë´íÎó</span>",$admin_name,2);
-		header("Location:?act=login&err=".urlencode('ÓÃ»§Ãû»òÃÜÂë´íÎó'));
+		write_log("<span style=\"color:#FF0000\">Ã“ÃƒÂ»Â§ÃƒÃ»Â»Ã²ÃƒÃœÃ‚Ã«Â´Ã­ÃÃ³</span>",$admin_name,2);
+		header("Location:?act=login&err=".urlencode('Ã“ÃƒÂ»Â§ÃƒÃ»Â»Ã²ÃƒÃœÃ‚Ã«Â´Ã­ÃÃ³'));
 		exit();
  	}
 header("Location: admin_index.php"); 

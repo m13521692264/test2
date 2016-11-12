@@ -49,6 +49,7 @@ elseif ($act=='get_pass_step2')
 	{
 		$usinfo=get_user_inusername($username);
 	}
+
 	if($usinfo['mobile'])
 	{
 		$usinfo['mobile_']=preg_replace('/(1[358]{1}[0-9])[0-9]{4}([0-9]{4})/i','$1****$2',$usinfo['mobile']);

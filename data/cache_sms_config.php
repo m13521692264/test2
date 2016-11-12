@@ -30,9 +30,9 @@ $data = array (
   'notice_sms_key' => 'BojLkrx83SYDxtmu',
   'free_sms_name' => 'yjobnet',
   'free_sms_key' => 'BojLkrx83SYDxtmu',
-  'set_qxbaoming' => '1',
+  'set_qxbaoming' => '0',
   'set_fanggz' => '1',
-  'set_jianlihs' => '1',
-  'set_jianlibhs' => '1',
+  'set_jianlihs' => '0',
+  'set_jianlibhs' => '0',
 );
 ?>

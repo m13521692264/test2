@@ -28,7 +28,7 @@ if($act == 'list')
 	if ($key && $key_type>0)
 	{
 		
-		if     ($key_type===1)$wheresql=" WHERE a.title like '%{$key}%'";
+		if ($key_type===1)$wheresql=" WHERE a.title like '%{$key}%'";
 	}
 	else
 	{

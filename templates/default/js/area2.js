@@ -133,10 +133,11 @@ $(function() {
 
 });
 
+var jstr = '';
 function addStations() {
-    var jstr = '';
+    jstr = '';
     jstr += 'provinceId='+$("[name='province']").val();
-    jstr += '&provinceName='+$("[name='province'] option:selected").text();;
+    jstr += '&provinceName='+$("[name='province'] option:selected").text();
     jstr += '&cityId='+$("[name='city']").val();
     jstr += '&cityName='+$("[name='city'] option:selected").text();
     jstr += '&countyId='+$("[name='county']").val();
@@ -156,10 +157,180 @@ function addStations() {
     jstr += '&work_end_time='+$("[name='work_end_hour']").val()+':'+$("[name='work_end_minute']").val();
     jstr += '&work_jh_time='+$("[name='work_jh_hour']").val()+':'+$("[name='work_jh_minute']").val();
     jstr += '&work_jh_dd='+$("[name='work_jh_dd']").val();
-    alert(jstr);
-    //var str= "<tr><td align=\"right\"></td> <td>"+ addrArr['provinceName']+'-'+addrArr['cityName']+'-'+addrArr['countyName']+'-'+addrArr['businessName']+','+addrArr['stations_jz_nums']+'人,'+addrArr['jz_xz']+'元/人,'+ addrArr['work_start']+'-'+ addrArr['work_end'] + "<a href=\"###\" onclick=\"openSetConfig();\">修改 </a> <a href=\"###\" onclick=\"copySets();\">复制</a> <a href=\"#\">删除</a> <input type=\"hidden\" name=\"stations[]\" value='"+jstr+"' /> </td></tr>";
+    jstr += '&position_lng='+$("#position_lng").val();
+    jstr += '&position_lat='+$("#position_lat").val();
+    jstr += '&work_xzdw_id='+$('#work_xzdw_id').val();
+    jstr += '&work_xzdw='+$('#work_xzdw').val();
+    var str1= "<tr><td align=\"right\"></td> <td>"+ $("[name='province'] option:selected").text()+'-'+$("[name='city'] option:selected").text()+'-'+$("[name='county'] option:selected").text()+'-'+$("[name='business'] option:selected").text()+','+$("[name='stations_jz_nums']").val()+'人,'+$("[name='jz_xz']").val()+'元/人,'+ $("[name='work_start']").val()+'-'+ $("[name='work_end']").val() + "<a href='javascript:void(0)' onclick='removeAreaInfo(this)'>删除</a>" + "<a href='javascript:void(0)' onclick='updateJob(this)'> 修改</a>" + "</td></tr>";
     var str= "<tr><td align=\"right\"></td> <td> <input type=\"hidden\" name=\"stations[]\" value='"+encodeURIComponent(jstr)+"' /> </td></tr>";
+    $('#configs').append(str1);
     $('#configs').append(str);
-
     closeSetConfig();
+}
+function updateStations () {
+    jstr = '';
+    jstr += 'provinceId='+$("[name='province']").val();
+    jstr += '&provinceName='+$("[name='province'] option:selected").text();
+    jstr += '&cityId='+$("[name='city']").val();
+    jstr += '&cityName='+$("[name='city'] option:selected").text();
+    jstr += '&countyId='+$("[name='county']").val();
+    jstr += '&countyName='+$("[name='county'] option:selected").text();
+    jstr += '&businessId='+$("[name='business']").val();
+    jstr += '&businessName='+$("[name='business'] option:selected").text();
+    jstr += '&fname='+$("[name='fname']").val();
+    jstr += '&dd_nums='+$("[name='dd_nums']").val();
+    jstr += '&dd_by_nums='+$("[name='dd_by_nums']").val();
+    jstr += '&ddxz='+$("[name='ddxz']").val();
+    jstr += '&stations_jz_nums='+$("[name='stations_jz_nums']").val();
+    jstr += '&stations_jz_by_nums='+$("[name='stations_jz_by_nums']").val();
+    jstr += '&jz_xz='+$("[name='jz_xz']").val();
+    jstr += '&work_start='+$("[name='work_start']").val();
+    jstr += '&work_end='+$("[name='work_end']").val();
+    jstr += '&work_start_time='+$("[name='work_start_hour']").val()+':'+$("[name='work_start_minute']").val();
+    jstr += '&work_end_time='+$("[name='work_end_hour']").val()+':'+$("[name='work_end_minute']").val();
+    jstr += '&work_jh_time='+$("[name='work_jh_hour']").val()+':'+$("[name='work_jh_minute']").val();
+    jstr += '&work_jh_dd='+$("[name='work_jh_dd']").val();
+    jstr += '&position_lng='+$("#position_lng").val();
+    jstr += '&position_lat='+$("#position_lat").val();
+    jstr += '&work_xzdw_id='+$('#work_xzdw_id').val();
+    jstr += '&work_xzdw='+$('#work_xzdw').val();
+
+    var str1= "<tr><td align=\"right\"></td> <td>"+ $("[name='province'] option:selected").text()+'-'+$("[name='city'] option:selected").text()+'-'+$("[name='county'] option:selected").text()+'-'+$("[name='business'] option:selected").text()+','+$("[name='stations_jz_nums']").val()+'人,'+$("[name='jz_xz']").val()+'元/人,'+ $("[name='work_start']").val()+'-'+ $("[name='work_end']").val() + "<a href='javascript:void(0)' onclick='removeAreaInfo(this)'>删除</a>" + "<a href='javascript:void(0)' onclick='updateJob(this)'> 修改</a>" + "</td></tr>";
+    var str= "<tr><td align=\"right\"></td> <td> <input type=\"hidden\" name=\"stations[]\" value='"+encodeURIComponent(jstr)+"' /> </td></tr>";
+    // $('#configs').append(str1);
+    // $('#configs').append(str);
+    var targetTr = $(".updateTr");
+    // console.log(targetTr);
+    targetTr.before(str1);
+    targetTr.before(str);
+    targetTr.next("tr").remove();
+    targetTr.remove();
+    closeSetConfig();
+}
+
+
+
+function updateJob(curNode)
+{
+    var otrEle = $(curNode).closest('tr').next('tr').find('input').val();
+    var str = decodeURIComponent(otrEle);
+    console.log(str);
+    var strs = [];
+    strs = str.split('&');
+    var area = {};
+    for(var i in strs){
+        var kv = strs[i].split("=");
+        area[kv[0]] = kv[1];
+    }
+
+    area.work_jh_hour = area.work_jh_time.split(':')[0];
+    area.work_jh_minute = area.work_jh_time.split(':')[1];
+    area.work_start_hour = area.work_start_time.split(':')[0];
+    area.work_start_minute = area.work_start_time.split(':')[1];
+    area.work_end_hour = area.work_end_time.split(':')[0];
+    area.work_end_minute = area.work_end_time.split(':')[1];
+
+
+    openSetConfig();
+
+    $('#dd_nums').val(area.dd_nums);
+    $('#dd_by_nums').val(area.dd_by_nums);
+    $('#ddxz').val(area.ddxz);
+    $('#work_xzdw_id').val(area.work_xzdw_id);
+    // $('#work_xzdw').val(area.work_xzdw);
+    $('#stations_jz_nums').val(area.stations_jz_nums);
+    $('#stations_jz_by_nums').val(area.stations_jz_by_nums);
+    $('#jz_xz').val(area.jz_xz);
+    $('#work_start').val(area.work_start);
+    $('#work_end').val(area.work_end);
+    $('#work_start_hour_id').val(area.work_start_hour_id); //0000
+    $('#work_start_hour').val(area.work_start_hour); //0000
+    $('#work_start_minute_id').val(area.work_start_minute_id); //0000
+    $('#work_start_minute').val(area.work_start_minute); //0000
+    $('#work_end_hour_id').val(area.work_end_hour_id);
+    $('#work_end_hour').val(area.work_end_hour);
+    $('#work_end_minute').val(area.work_end_minute);
+    $('#work_end_minute_id').val(area.work_end_minute_id);
+    $('#work_jh_hour_id').val(area.work_jh_hour_id);
+    $('#work_jh_hour').val(area.work_jh_hour);
+    $('#work_jh_minute_id').val(area.work_jh_minute_id);
+    $('#work_jh_minute').val(area.work_jh_minute);
+    $('#work_jh_dd').val(area.work_jh_dd);
+    $("#suggestId").val(area.fname);
+    // console.log(area.work_xzdw_id);
+    $("#work_xzdw_menu").html($("li#"+area.work_xzdw_id).html());
+    $("#work_start_hour_menu").html(area.work_start_hour);
+    $("#work_start_minute_menu").html(area.work_start_minute);
+    $("#work_our_menu").html(area.work_end_hour);
+    $("#work_minute_menu").html(area.work_end_minute);
+    $("#work_jh_hour_menu").html(area.work_jh_hour);
+    $("#work_jh_minute_menu").html(area.work_jh_minute);
+    getPosition(area.businessName, area.cityName + area.countyName + area.businessName, 14, 1);
+    //$('#province').children("[value='"+area.provinceId+"']").prop("selected","true");
+
+    //$('#city').children("[value='"+area.cityId+"']").prop("selected","true");
+
+    //$('#county').children("[value='"+area.countyId+"']").prop("selected","true");
+
+    //$('#business').children("[value='"+area.businessId+"']").prop("selected","true");
+
+    // function eachOption(addr, area){
+    //     addr.each(function(i, e){
+    //         if($(e).val() == area){
+    //             $(this).attr('selected', true);
+    //         }
+    //     });
+    // }
+    // eachOption($('#province option'), area.provinceId);
+    $('#province option').each(function(i, e){
+        if($(e).val() == area.provinceId){
+            $(this).attr('selected', true);
+        }
+    });
+
+    // 根据父级id获取子类的地区数据
+    function areaOption (areaId, selectId, nextId) {
+        var tsTimeStamp= new Date().getTime();
+        $.get("company_ajax.php", {"act":"get_cat_qgdistrict","tstime":tsTimeStamp,"pid":areaId},
+            function(data) {
+                data = data.replace(/,0,,/g, '');
+                data = data.split('|');
+                selectId.find('option').remove("[value!='0']");
+                // var result = {};
+                for(var i in data){
+                    var kv = data[i].split(",");
+                    // result[kv[0]] = kv[1];
+                    if(kv[0]+'||' == nextId){
+                        $("<option selected='selected' value='" + kv[0] + "||'>" + kv[1] + "</option>").appendTo(selectId);
+                    }else{
+                        $("<option value='" + kv[0] + "||'>" + kv[1] + "</option>").appendTo(selectId);
+                    }
+                }
+                // console.log(result);
+                // console.log(data);
+            }
+        )
+    }
+    areaOption(0, $('#province'), area.provinceId);
+    areaOption(area.provinceId, $('#city'), area.cityId);
+    areaOption(area.cityId, $('#county'), area.countyId);
+    areaOption(area.countyId, $('#business'), area.businessId);
+
+
+    $("#saveBtn").data("method","update");
+    // console.log($("#saveBtn"));
+    var targetTr = $(curNode).closest('tr');
+    targetTr.addClass("updateTr");
+
+}
+
+function removeAreaInfo(curNode){
+    if(confirm("确定删除该点位信息？")){
+        var curTr = $(curNode).closest("tr");
+        var stationId = curTr.attr('station_id');
+        var delstationsIds = $('#del_stations_id').val();
+        $('#del_stations_id').val(delstationsIds + ',' + stationId);
+        curTr.next().remove();
+        curTr.remove();
+    }
 }
